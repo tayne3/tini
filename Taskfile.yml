@@ -1,0 +1,59 @@
+# https://taskfile.dev
+
+version: "3"
+
+dotenv:
+  - .env
+
+tasks:
+  default:
+    summary: Show available tasks
+    silent: true
+    cmds:
+      - task --list
+
+  config:
+    desc: Configure the project
+    silent: true
+    vars:
+      BUILD_TYPE: '{{.BUILD_TYPE | default "Release"}}'
+      BUILD_DIR: "cmake-build-{{.BUILD_TYPE | lower}}"
+    cmds:
+      - |
+        cmake -S . -B {{.BUILD_DIR}} \
+          -DCMAKE_BUILD_TYPE={{.BUILD_TYPE}} \
+          {{if .TINI_BUILD_EXAMPLE}}-DTINI_BUILD_EXAMPLE={{.TINI_BUILD_EXAMPLE}}{{end}} \
+          {{if .TINI_BUILD_TEST}}-DTINI_BUILD_TEST={{.TINI_BUILD_TEST}}{{end}} \
+          {{if .TINI_BUILD_SHARED}}-DTINI_BUILD_SHARED={{.TINI_BUILD_SHARED}}{{end}} \
+          {{if .BUILD_ARGS}}{{.BUILD_ARGS}}{{end}}
+
+  build:
+    desc: Build the project
+    silent: true
+    vars:
+      BUILD_TYPE: '{{.BUILD_TYPE | default "Release"}}'
+      BUILD_DIR: "cmake-build-{{.BUILD_TYPE | lower}}"
+      PARALLEL_JOBS:
+        sh: nproc 2>/dev/null || echo 1
+    cmds:
+      - cmake --build {{.BUILD_DIR}} --config {{.BUILD_TYPE}} --parallel {{.PARALLEL_JOBS}}
+
+  test:
+    desc: Run tests
+    silent: true
+    vars:
+      BUILD_TYPE: '{{.BUILD_TYPE | default "Release"}}'
+      BUILD_DIR: "cmake-build-{{.BUILD_TYPE | lower}}"
+    deps:
+      - task: build
+    cmds:
+      - ctest --test-dir {{.BUILD_DIR}} -C {{.BUILD_TYPE}} --output-on-failure
+
+  clean:
+    desc: Clean the build directory
+    silent: true
+    vars:
+      BUILD_TYPE: '{{.BUILD_TYPE | default "Release"}}'
+      BUILD_DIR: "cmake-build-{{.BUILD_TYPE | lower}}"
+    cmds:
+      - rm -rf {{.BUILD_DIR}}

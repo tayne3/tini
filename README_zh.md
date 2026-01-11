@@ -5,18 +5,18 @@
 [![Tag](https://img.shields.io/github/v/tag/tayne3/tini?color=%23ff8936&style=flat-square&logo=git&logoColor=white)](https://github.com/tayne3/tini/tags)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/tayne3/tini)
 
-**English** | [中文](README_zh.md)
+[English](README.md) | **中文**
 
-tini (Tiny INI) is a C library for reading and writing INI configuration files.
+tini (Tiny INI) 是一个用于读写 INI 配置文件的 C 语言库。
 
-## ✨ Features
+## ✨ 特性
 
-- Lightweight, written in ANSI C (C99), with no external dependencies.
-- Simple and easy-to-use interface, designed for maintainability.
+- 轻量级和单文件,使用 ANSI C(C99)标准编写,无任何依赖
+- 简单易用的接口设计, 易于维护
 
-## ⌛️ Build
+## ⌛️ 构建
 
-tini uses CMake as the build system and supports cross-platform compilation.
+tini 使用 CMake 作为构建系统，支持跨平台编译。
 
 ```sh
 mkdir build
@@ -25,24 +25,24 @@ cmake ..
 cmake --build .
 ```
 
-## 📚 Usage Examples
+## 📚 使用示例
 
-**Initialization**:
+**初始化**:
 
 ```c
 tini_ptr_t tini = tini_create("config.ini");
 ```
 
-**Reading Values**:
+**读取值**:
 
-First find the section, then find the key to retrieve its value (returns `NULL` if not found).
+使用 tini_group_begin 进入某个组, 然后使用 tini_value_get 获取指定键名的键值, 若键名不存在则使用默认值。
 
 ```c
 tini_key_t *key = tini_find_key(tini, "section1", "key1");
 const char *value = tini_key_get(key, "default");
 ```
 
-**Full Example**:
+**示例代码**:
 
 ```c
 #include "tini/tini.h"
