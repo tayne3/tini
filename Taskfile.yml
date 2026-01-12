@@ -47,7 +47,9 @@ tasks:
     deps:
       - task: build
     cmds:
-      - ctest --test-dir {{.BUILD_DIR}} -C {{.BUILD_TYPE}} --output-on-failure
+      - |
+        cd {{.BUILD_DIR}}
+        ctest -C {{.BUILD_TYPE}} --output-on-failure
 
   clean:
     desc: Clean the build directory
