@@ -32,8 +32,8 @@
 #include "tini/tini.h"
 
 #ifdef _MSC_VER
-#define strcasecmp  stricmp
-#define strncasecmp strnicmp
+#define strcasecmp  _stricmp
+#define strncasecmp _strnicmp
 #else
 #include <strings.h>
 #endif

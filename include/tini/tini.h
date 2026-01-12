@@ -28,6 +28,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "tini/tini_export.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -58,25 +60,25 @@ typedef struct tini_key tini_key_t;
  * @param path Path to the INI file
  * @return Pointer to tini object, or NULL on failure
  */
-tini_ptr_t tini_create(const char *path);
+TINI_EXPORT tini_ptr_t tini_create(const char *path);
 
 /**
  * @brief Create an empty tini object
  * @return Pointer to tini object, or NULL on failure
  */
-tini_ptr_t tini_empty(void);
+TINI_EXPORT tini_ptr_t tini_empty(void);
 
 /**
  * @brief Destroy the tini object and free all associated memory
  * @param self Pointer to tini object
  */
-void tini_destroy(tini_ptr_t self);
+TINI_EXPORT void tini_destroy(tini_ptr_t self);
 
 /**
  * @brief Clear all sections and keys from a tini object
  * @param self Pointer to tini object
  */
-void tini_clear(tini_ptr_t self);
+TINI_EXPORT void tini_clear(tini_ptr_t self);
 
 /**
  * @brief Load configuration from file into existing tini object
@@ -85,7 +87,7 @@ void tini_clear(tini_ptr_t self);
  * @return 0 on success, error code otherwise
  * @note Merges with existing data. Use tini_clear() first if replacement is needed.
  */
-int tini_load(tini_ptr_t self, const char *path);
+TINI_EXPORT int tini_load(tini_ptr_t self, const char *path);
 
 /**
  * @brief Save the configuration to a file
@@ -93,7 +95,7 @@ int tini_load(tini_ptr_t self, const char *path);
  * @param path Path to save the file
  * @return 0 on success, error code otherwise
  */
-int tini_save_to(tini_ptr_t self, const char *path);
+TINI_EXPORT int tini_save_to(tini_ptr_t self, const char *path);
 
 // -----------------------------------------------------------------------------
 // Section Management
@@ -105,7 +107,7 @@ int tini_save_to(tini_ptr_t self, const char *path);
  * @param name Section name
  * @return Pointer to the section
  */
-tini_section_t *tini_get_section(tini_ptr_t self, const char *name);
+TINI_EXPORT tini_section_t *tini_get_section(tini_ptr_t self, const char *name);
 
 /**
  * @brief Find a section by name (does not create)
@@ -113,7 +115,7 @@ tini_section_t *tini_get_section(tini_ptr_t self, const char *name);
  * @param name Section name
  * @return Pointer to the section, or NULL if not found
  */
-tini_section_t *tini_find_section(tini_ptr_t self, const char *name);
+TINI_EXPORT tini_section_t *tini_find_section(tini_ptr_t self, const char *name);
 
 /**
  * @brief Remove a section by name
@@ -121,7 +123,7 @@ tini_section_t *tini_find_section(tini_ptr_t self, const char *name);
  * @param name Section name
  * @return 0 on success, error code otherwise
  */
-int tini_remove_section(tini_ptr_t self, const char *name);
+TINI_EXPORT int tini_remove_section(tini_ptr_t self, const char *name);
 
 /**
  * @brief Get a key by section and key name, creating both if they don't exist
@@ -130,7 +132,7 @@ int tini_remove_section(tini_ptr_t self, const char *name);
  * @param key Key name
  * @return Pointer to the key, or NULL on failure
  */
-tini_key_t *tini_get_key(tini_ptr_t self, const char *section, const char *key);
+TINI_EXPORT tini_key_t *tini_get_key(tini_ptr_t self, const char *section, const char *key);
 
 /**
  * @brief Find a key by section and key name (does not create)
@@ -139,7 +141,7 @@ tini_key_t *tini_get_key(tini_ptr_t self, const char *section, const char *key);
  * @param key Key name
  * @return Pointer to the key, or NULL if section or key not found
  */
-tini_key_t *tini_find_key(tini_ptr_t self, const char *section, const char *key);
+TINI_EXPORT tini_key_t *tini_find_key(tini_ptr_t self, const char *section, const char *key);
 
 // -----------------------------------------------------------------------------
 // Key Management
@@ -151,7 +153,7 @@ tini_key_t *tini_find_key(tini_ptr_t self, const char *section, const char *key)
  * @param key Key name
  * @return Pointer to the key
  */
-tini_key_t *tini_section_get_key(tini_section_t *section, const char *key);
+TINI_EXPORT tini_key_t *tini_section_get_key(tini_section_t *section, const char *key);
 
 /**
  * @brief Find a key in a section (does not create)
@@ -159,7 +161,7 @@ tini_key_t *tini_section_get_key(tini_section_t *section, const char *key);
  * @param key Key name
  * @return Pointer to the key, or NULL if not found
  */
-tini_key_t *tini_section_find_key(tini_section_t *section, const char *key);
+TINI_EXPORT tini_key_t *tini_section_find_key(tini_section_t *section, const char *key);
 
 /**
  * @brief Check if a key exists in a section
@@ -167,7 +169,7 @@ tini_key_t *tini_section_find_key(tini_section_t *section, const char *key);
  * @param key Key name
  * @return true if exists, false otherwise
  */
-bool tini_section_has_key(tini_section_t *section, const char *key);
+TINI_EXPORT bool tini_section_has_key(tini_section_t *section, const char *key);
 
 /**
  * @brief Add or update a key with a string value
@@ -176,7 +178,7 @@ bool tini_section_has_key(tini_section_t *section, const char *key);
  * @param value String value
  * @return Pointer to the key
  */
-tini_key_t *tini_section_add_key(tini_section_t *section, const char *key, const char *value);
+TINI_EXPORT tini_key_t *tini_section_add_key(tini_section_t *section, const char *key, const char *value);
 
 /**
  * @brief Remove a key from a section
@@ -184,49 +186,49 @@ tini_key_t *tini_section_add_key(tini_section_t *section, const char *key, const
  * @param key Key name
  * @return 0 on success, error code otherwise
  */
-int tini_section_remove_key(tini_section_t *section, const char *key);
+TINI_EXPORT int tini_section_remove_key(tini_section_t *section, const char *key);
 
 /**
  * @brief Get the first section in the configuration
  * @param self Pointer to tini object
  * @return Pointer to the first section, or NULL if empty
  */
-tini_section_t *tini_first_section(tini_cptr_t self);
+TINI_EXPORT tini_section_t *tini_first_section(tini_cptr_t self);
 
 /**
  * @brief Get the next section after the given section
  * @param section Pointer to current section
  * @return Pointer to the next section, or NULL if at end
  */
-tini_section_t *tini_section_next(const tini_section_t *section);
+TINI_EXPORT tini_section_t *tini_section_next(const tini_section_t *section);
 
 /**
  * @brief Get the name of a section
  * @param section Pointer to section object
  * @return Section name (owned by section, do not free), or NULL if invalid
  */
-const char *tini_section_name(const tini_section_t *section);
+TINI_EXPORT const char *tini_section_name(const tini_section_t *section);
 
 /**
  * @brief Get the first key in a section
  * @param section Pointer to section object
  * @return Pointer to the first key, or NULL if section is empty
  */
-tini_key_t *tini_section_first_key(const tini_section_t *section);
+TINI_EXPORT tini_key_t *tini_section_first_key(const tini_section_t *section);
 
 /**
  * @brief Get the next key after the given key
  * @param key Pointer to current key
  * @return Pointer to the next key, or NULL if at end
  */
-tini_key_t *tini_key_next(const tini_key_t *key);
+TINI_EXPORT tini_key_t *tini_key_next(const tini_key_t *key);
 
 /**
  * @brief Get the name of a key
  * @param key Pointer to key object
  * @return Key name (owned by key, do not free), or NULL if invalid
  */
-const char *tini_key_name(const tini_key_t *key);
+TINI_EXPORT const char *tini_key_name(const tini_key_t *key);
 
 // -----------------------------------------------------------------------------
 // Value Access & Conversion
@@ -237,14 +239,14 @@ const char *tini_key_name(const tini_key_t *key);
  * @param key Pointer to key object
  * @param value New string value
  */
-void tini_key_set_value(tini_key_t *key, const char *value);
+TINI_EXPORT void tini_key_set_value(tini_key_t *key, const char *value);
 
 /**
  * @brief Get the raw string value of a key
  * @param key Pointer to key object
  * @return String value (owned by the key, do not free)
  */
-const char *tini_key_get_value(const tini_key_t *key);
+TINI_EXPORT const char *tini_key_get_value(const tini_key_t *key);
 
 /**
  * @brief Get string value with default.
@@ -252,7 +254,7 @@ const char *tini_key_get_value(const tini_key_t *key);
  * @param default_value Fallback if key is NULL or has no value.
  * @return Key value or default_value.
  */
-const char *tini_key_get(const tini_key_t *key, const char *default_value);
+TINI_EXPORT const char *tini_key_get(const tini_key_t *key, const char *default_value);
 
 /**
  * @brief Get non-empty string value.
@@ -260,7 +262,7 @@ const char *tini_key_get(const tini_key_t *key, const char *default_value);
  * @param default_value Fallback if key is NULL, empty, or whitespace-only.
  * @return Key value or default_value.
  */
-const char *tini_key_get_string(const tini_key_t *key, const char *default_value);
+TINI_EXPORT const char *tini_key_get_string(const tini_key_t *key, const char *default_value);
 
 /**
  * @brief Parse value as int.
@@ -268,7 +270,7 @@ const char *tini_key_get_string(const tini_key_t *key, const char *default_value
  * @param default_value Fallback on parse failure.
  * @return Parsed integer or default_value.
  */
-int tini_key_get_int(const tini_key_t *key, int default_value);
+TINI_EXPORT int tini_key_get_int(const tini_key_t *key, int default_value);
 
 /**
  * @brief Parse value as int64_t.
@@ -277,7 +279,7 @@ int tini_key_get_int(const tini_key_t *key, int default_value);
  * @return Parsed integer or default_value.
  * @note Supports decimal, hex (0x), and octal (0) prefixes.
  */
-int64_t tini_key_get_i64(const tini_key_t *key, int64_t default_value);
+TINI_EXPORT int64_t tini_key_get_i64(const tini_key_t *key, int64_t default_value);
 
 /**
  * @brief Parse value as uint64_t.
@@ -286,7 +288,7 @@ int64_t tini_key_get_i64(const tini_key_t *key, int64_t default_value);
  * @return Parsed unsigned integer or default_value.
  * @note Rejects negative values. Supports decimal and hex prefixes.
  */
-uint64_t tini_key_get_u64(const tini_key_t *key, uint64_t default_value);
+TINI_EXPORT uint64_t tini_key_get_u64(const tini_key_t *key, uint64_t default_value);
 
 /**
  * @brief Convert key value to double
@@ -294,7 +296,7 @@ uint64_t tini_key_get_u64(const tini_key_t *key, uint64_t default_value);
  * @param default_value Value to return if conversion fails
  * @return Double value
  */
-double tini_key_get_double(const tini_key_t *key, double default_value);
+TINI_EXPORT double tini_key_get_double(const tini_key_t *key, double default_value);
 
 /**
  * @brief Convert key value to bool
@@ -302,7 +304,7 @@ double tini_key_get_double(const tini_key_t *key, double default_value);
  * @param default_value Value to return if conversion fails
  * @return Boolean value
  */
-bool tini_key_get_bool(const tini_key_t *key, bool default_value);
+TINI_EXPORT bool tini_key_get_bool(const tini_key_t *key, bool default_value);
 
 // -----------------------------------------------------------------------------
 // Error Handling
@@ -313,14 +315,14 @@ bool tini_key_get_bool(const tini_key_t *key, bool default_value);
  * @param self Pointer to tini object
  * @return Error code
  */
-int tini_last_error(tini_cptr_t self);
+TINI_EXPORT int tini_last_error(tini_cptr_t self);
 
 /**
  * @brief Get the string description of an error code
  * @param code Error code
  * @return Error description
  */
-const char *tini_error_string(int code);
+TINI_EXPORT const char *tini_error_string(int code);
 
 #ifdef __cplusplus
 }
@@ -334,7 +336,7 @@ const char *tini_error_string(int code);
 
 namespace tini {
 
-class Key {
+class TINI_EXPORT Key {
 public:
 	explicit Key(tini_key_t *k) : d(k) {}
 	bool        valid() const { return d != nullptr; }
@@ -356,7 +358,7 @@ private:
 	tini_key_t *d;
 };
 
-class Section {
+class TINI_EXPORT Section {
 public:
 	explicit Section(tini_section_t *s) : d(s) {}
 	bool        valid() const { return d != nullptr; }
@@ -383,7 +385,7 @@ private:
 	tini_section_t *d;
 };
 
-class Ini {
+class TINI_EXPORT Ini {
 public:
 	Ini() : d(tini_empty()) {
 		if (!d) {

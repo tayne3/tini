@@ -13,12 +13,7 @@ if(PROJECT_IS_TOP_LEVEL)
   if(NOT DEFINED ENV{CPM_SOURCE_CACHE})
     set(ENV{CPM_SOURCE_CACHE} ${CMAKE_SOURCE_DIR}/cmake_modules)
   endif()
-endif()
 
-option(TINI_BUILD_SHARED "build shared library" OFF)
-mark_as_advanced(TINI_BUILD_SHARED)
-
-if(PROJECT_IS_TOP_LEVEL)
   option(TINI_BUILD_EXAMPLE "build example program" OFF)
   option(TINI_BUILD_TEST "build test program" OFF)
 endif()

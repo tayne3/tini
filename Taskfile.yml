@@ -22,9 +22,9 @@ tasks:
       - |
         cmake -S . -B {{.BUILD_DIR}} \
           -DCMAKE_BUILD_TYPE={{.BUILD_TYPE}} \
+          {{if .BUILD_SHARED_LIBS}}-DBUILD_SHARED_LIBS={{.BUILD_SHARED_LIBS}}{{end}} \
           {{if .TINI_BUILD_EXAMPLE}}-DTINI_BUILD_EXAMPLE={{.TINI_BUILD_EXAMPLE}}{{end}} \
           {{if .TINI_BUILD_TEST}}-DTINI_BUILD_TEST={{.TINI_BUILD_TEST}}{{end}} \
-          {{if .TINI_BUILD_SHARED}}-DTINI_BUILD_SHARED={{.TINI_BUILD_SHARED}}{{end}} \
           {{if .BUILD_ARGS}}{{.BUILD_ARGS}}{{end}}
 
   build:

@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include(GNUInstallDirs)
@@ -22,13 +22,12 @@ else()
   set(CMAKE_INSTALL_RPATH "$ORIGIN;$ORIGIN/${CMAKE_INSTALL_LIBDIR}")
 endif()
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
 add_library(tini_compile_dependency INTERFACE)
-target_compile_features(tini_compile_dependency INTERFACE 
-  c_std_99
-)
-target_include_directories(tini_compile_dependency INTERFACE 
-  ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
+target_compile_features(tini_compile_dependency INTERFACE c_std_99 cxx_std_11)
 
 # set source charset to utf-8 for MSVC
 if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
