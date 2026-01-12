@@ -46,12 +46,12 @@ static void test_cpp_basic(void) {
 	ini3.load(path);
 	section = ini3.getSection("network");
 
-	assert_int_eq(42, section.getKey("int").getInt());
-	assert_int64_eq(-1, section.getKey("i64").getI64());
-	assert_uint64_eq(121, section.getKey("u64").getU64());
-	assert_double_eq(3.14, section.getKey("double").getDouble());
-	assert_true(section.getKey("true").getBool());
-	assert_false(section.getKey("false").getBool());
+	assert_int_eq(42, ini3.getKey("network", "int").getInt());
+	assert_int64_eq(-1, ini3.getKey("network", "i64").getI64());
+	assert_uint64_eq(121, ini3.getKey("network", "u64").getU64());
+	assert_double_eq(3.14, ini3.getKey("network", "double").getDouble());
+	assert_true(ini3.getKey("network", "true").getBool());
+	assert_false(ini3.getKey("network", "false").getBool());
 
 	remove(path);
 }
