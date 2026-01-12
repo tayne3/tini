@@ -16,7 +16,7 @@ if(BUILD_SHARED_LIBS)
 endif()
 message(STATUS "tini v${TINI_VERSION} ${TINI_LIB_TYPE} library")
 
-add_library(tini ${TINI_LIB_TYPE})
+add_library(tini ${TINI_LIB_TYPE} src/tini.c)
 add_library(tini::tini ALIAS tini)
 set_target_properties(tini PROPERTIES
   VISIBILITY_INLINES_HIDDEN TRUE
@@ -27,12 +27,6 @@ target_link_libraries(tini PRIVATE tini_compile_dependency)
 target_include_directories(tini PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-)
-target_sources(tini PRIVATE 
-  src/core.c
-  src/section.c
-  src/key.c
-  src/utils.c
 )
 
 include(GenerateExportHeader)
