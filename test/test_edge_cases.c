@@ -8,7 +8,7 @@ void test_very_long_key(void) {
 	memset(long_key, 'k', SIZE - 1);
 	long_key[SIZE - 1] = '\0';
 
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_key_t *key = tini_section_add_key(sec, long_key, "value");
@@ -30,7 +30,7 @@ void test_very_long_value(void) {
 	memset(long_value, 'v', SIZE - 1);
 	long_value[SIZE - 1] = '\0';
 
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_key_t *key = tini_section_add_key(sec, "key", long_value);
@@ -49,7 +49,7 @@ void test_very_long_section_name(void) {
 	memset(long_name, 's', SIZE - 1);
 	long_name[SIZE - 1] = '\0';
 
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, long_name);
 	assert_not_null(sec);
 
@@ -61,7 +61,7 @@ void test_very_long_section_name(void) {
 }
 
 void test_empty_string_value(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_key_t *key = tini_section_add_key(sec, "empty", "");
@@ -72,7 +72,7 @@ void test_empty_string_value(void) {
 }
 
 void test_null_value(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_key_t *key = tini_section_add_key(sec, "null_val", NULL);
@@ -83,7 +83,7 @@ void test_null_value(void) {
 }
 
 void test_special_chars_in_value(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "special");
 
 	const char *values[] = {
@@ -103,7 +103,7 @@ void test_special_chars_in_value(void) {
 }
 
 void test_quoted_special_values(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "quotes");
 
 	tini_key_t *key1 = tini_section_add_key(sec, "key1", "\"  spaces  \"");
@@ -122,7 +122,7 @@ void test_quoted_special_values(void) {
 }
 
 void test_many_keys_in_section(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "bulk");
 
 	for (int i = 0; i < 1000; i++) {
@@ -140,7 +140,7 @@ void test_many_keys_in_section(void) {
 }
 
 void test_many_sections(void) {
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 
 	for (int i = 0; i < 500; i++) {
 		char sec_name[32];
@@ -157,7 +157,7 @@ void test_many_sections(void) {
 }
 
 void test_whitespace_only_value(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_key_t *key1 = tini_section_add_key(sec, "spaces", "   ");

@@ -5,7 +5,7 @@
 #include "test_common.h"
 
 void test_key_get(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 	tini_key_t     *key = tini_section_add_key(sec, "str", "hello");
 	assert_str_eq("hello", tini_key_get(key, "default"));
@@ -18,7 +18,7 @@ void test_key_get(void) {
 }
 
 void test_key_get_string(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 	tini_key_t     *key = tini_section_add_key(sec, "str", "hello");
 	assert_str_eq("hello", tini_key_get_string(key, "default"));
@@ -42,7 +42,7 @@ void test_key_get_int_valid(void) {
 		{-01000, "-01000"}, {0xFFFF, "0xFFFF"}, {-0xFFFF, "-0xFFFF"}, {0x4242, "0x4242"}, {0xFF, "0xff"},
 	};
 
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	for (size_t i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i) {
@@ -57,7 +57,7 @@ void test_key_get_int_valid(void) {
 void test_key_get_int_invalid(void) {
 	const char *bad_values[] = {"", "notanumber", "0x", "k2000", "   ", "0xG1"};
 
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	for (size_t i = 0; i < sizeof(bad_values) / sizeof(bad_values[0]); ++i) {
@@ -83,7 +83,7 @@ void test_key_get_i64_valid(void) {
 		{123, "123  "},
 	};
 
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	for (size_t i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i) {
@@ -97,7 +97,7 @@ void test_key_get_i64_valid(void) {
 void test_key_get_i64_invalid(void) {
 	const char *bad_values[] = {"", "abc", "123abc", "0x", "0xGGG", "   "};
 
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	for (size_t i = 0; i < sizeof(bad_values) / sizeof(bad_values[0]); ++i) {
@@ -121,7 +121,7 @@ void test_key_get_u64_valid(void) {
 		{123, "123  "},
 	};
 
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	for (size_t i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i) {
@@ -135,7 +135,7 @@ void test_key_get_u64_valid(void) {
 void test_key_get_u64_invalid(void) {
 	const char *bad_values[] = {"", "-1", "-0", "abc", "123abc", "   "};
 
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	for (size_t i = 0; i < sizeof(bad_values) / sizeof(bad_values[0]); ++i) {
@@ -162,7 +162,7 @@ void test_key_get_double_valid(void) {
 		{1.5e-5, "1.5e-5"},
 	};
 
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	for (size_t i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i) {
@@ -178,7 +178,7 @@ void test_key_get_double_valid(void) {
 void test_key_get_double_invalid(void) {
 	const char *bad_values[] = {"foo", "not_a_number", "NaN_text"};
 
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	const double DEFAULT = 42.42;
@@ -198,7 +198,7 @@ void test_key_get_bool_true(void) {
 		"1", "true", "t", "TRUE", "T", "yes", "y", "YES", "Y",
 	};
 
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	for (size_t i = 0; i < sizeof(true_values) / sizeof(true_values[0]); ++i) {
@@ -214,7 +214,7 @@ void test_key_get_bool_false(void) {
 		"0", "false", "f", "FALSE", "F", "no", "n", "NO", "N",
 	};
 
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	for (size_t i = 0; i < sizeof(false_values) / sizeof(false_values[0]); ++i) {
@@ -228,7 +228,7 @@ void test_key_get_bool_false(void) {
 void test_key_get_bool_invalid(void) {
 	const char *invalid_values[] = {"", "m'kay", "42", "_true", "maybe"};
 
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	for (size_t i = 0; i < sizeof(invalid_values) / sizeof(invalid_values[0]); ++i) {

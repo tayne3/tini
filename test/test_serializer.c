@@ -3,7 +3,7 @@
 void test_save_basic(void) {
 	const char *path = test_tmp_path("save_basic.ini");
 
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 	tini_section_add_key(sec, "key1", "value1");
 	tini_section_add_key(sec, "key2", "value2");
@@ -17,7 +17,7 @@ void test_save_basic(void) {
 void test_save_multiple_sections(void) {
 	const char *path = test_tmp_path("save_multi.ini");
 
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 
 	tini_section_t *sec1 = tini_get_section(ini, "section1");
 	tini_section_add_key(sec1, "key1", "value1");
@@ -36,7 +36,7 @@ void test_save_multiple_sections(void) {
 
 void test_roundtrip_basic(void) {
 	const char     *path = test_tmp_path("roundtrip.ini");
-	tini_ptr_t      ini1 = tini_empty();
+	tini_t         *ini1 = tini_empty();
 	tini_section_t *sec1 = tini_get_section(ini1, "data");
 	tini_section_add_key(sec1, "name", "test");
 	tini_section_add_key(sec1, "count", "42");
@@ -45,7 +45,7 @@ void test_roundtrip_basic(void) {
 
 	assert_int_eq(0, tini_save_to(ini1, path));
 	tini_destroy(ini1);
-	tini_ptr_t ini2 = tini_create(path);
+	tini_t *ini2 = tini_create(path);
 	assert_not_null(ini2);
 
 	tini_section_t *sec2 = tini_find_section(ini2, "data");
@@ -61,7 +61,7 @@ void test_roundtrip_basic(void) {
 
 void test_roundtrip_special_chars(void) {
 	const char     *path = test_tmp_path("roundtrip_special.ini");
-	tini_ptr_t      ini1 = tini_empty();
+	tini_t         *ini1 = tini_empty();
 	tini_section_t *sec1 = tini_get_section(ini1, "special");
 	tini_section_add_key(sec1, "equals", "a=b=c");
 	tini_section_add_key(sec1, "hash", "a#b#c");
@@ -70,7 +70,7 @@ void test_roundtrip_special_chars(void) {
 
 	assert_int_eq(0, tini_save_to(ini1, path));
 	tini_destroy(ini1);
-	tini_ptr_t ini2 = tini_create(path);
+	tini_t *ini2 = tini_create(path);
 	assert_not_null(ini2);
 
 	tini_section_t *sec2 = tini_find_section(ini2, "special");
@@ -85,7 +85,7 @@ void test_roundtrip_special_chars(void) {
 void test_roundtrip_empty_values(void) {
 	const char *path = test_tmp_path("roundtrip_empty.ini");
 
-	tini_ptr_t      ini1 = tini_empty();
+	tini_t         *ini1 = tini_empty();
 	tini_section_t *sec1 = tini_get_section(ini1, "empty");
 	tini_section_add_key(sec1, "empty_val", "");
 	tini_section_add_key(sec1, "with_val", "something");
@@ -93,7 +93,7 @@ void test_roundtrip_empty_values(void) {
 	assert_int_eq(0, tini_save_to(ini1, path));
 	tini_destroy(ini1);
 
-	tini_ptr_t ini2 = tini_create(path);
+	tini_t *ini2 = tini_create(path);
 	assert_not_null(ini2);
 
 	tini_section_t *sec2 = tini_find_section(ini2, "empty");
@@ -110,7 +110,7 @@ void test_roundtrip_empty_values(void) {
 void test_roundtrip_unicode(void) {
 	const char *path = test_tmp_path("roundtrip_unicode.ini");
 
-	tini_ptr_t      ini1 = tini_empty();
+	tini_t         *ini1 = tini_empty();
 	tini_section_t *sec1 = tini_get_section(ini1, "unicode");
 	tini_section_add_key(sec1, "chinese", "中文测试");
 	tini_section_add_key(sec1, "japanese", "日本語テスト");
@@ -120,7 +120,7 @@ void test_roundtrip_unicode(void) {
 	assert_int_eq(0, tini_save_to(ini1, path));
 	tini_destroy(ini1);
 
-	tini_ptr_t ini2 = tini_create(path);
+	tini_t *ini2 = tini_create(path);
 	assert_not_null(ini2);
 
 	tini_section_t *sec2 = tini_find_section(ini2, "unicode");
@@ -138,7 +138,7 @@ void test_roundtrip_unicode(void) {
 void test_save_large_file(void) {
 	const char *path = test_tmp_path("large.ini");
 
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 
 	for (int i = 0; i < 50; i++) {
 		char sec_name[32];
@@ -155,7 +155,7 @@ void test_save_large_file(void) {
 	}
 
 	assert_int_eq(0, tini_save_to(ini, path));
-	tini_ptr_t ini2 = tini_create(path);
+	tini_t *ini2 = tini_create(path);
 	assert_not_null(ini2);
 
 	tini_section_t *sec25 = tini_find_section(ini2, "section_25");

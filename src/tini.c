@@ -59,21 +59,21 @@ enum tini_error {
 		TinyError_Max,
 };
 
-struct tini_key {
-	char            *key;
-	char            *value;
-	struct tini_key *next;
+struct tini_key_s {
+	char              *key;
+	char              *value;
+	struct tini_key_s *next;
 };
 
-struct tini_section {
-	char                *name;
-	struct tini_key     *keys;
-	struct tini_section *next;
+struct tini_section_s {
+	char                  *name;
+	struct tini_key_s     *keys;
+	struct tini_section_s *next;
 };
 
 struct tini_s {
-	struct tini_section *sections;
-	int                  last_error;
+	struct tini_section_s *sections;
+	int                    last_error;
 };
 
 // ============================================================================
@@ -90,8 +90,8 @@ static bool  tini__is_blank_tail(const char *s);
 // LIFECYCLE MANAGEMENT
 // ============================================================================
 
-tini_ptr_t tini_create(const char *path) {
-	tini_ptr_t self = (tini_ptr_t)malloc(sizeof(tini_t));
+tini_t *tini_create(const char *path) {
+	tini_t *self = (tini_t *)malloc(sizeof(tini_t));
 	if (!self) {
 		return NULL;
 	}
@@ -105,11 +105,11 @@ tini_ptr_t tini_create(const char *path) {
 	return self;
 }
 
-tini_ptr_t tini_empty(void) {
+tini_t *tini_empty(void) {
 	return tini_create(NULL);
 }
 
-void tini_destroy(tini_ptr_t self) {
+void tini_destroy(tini_t *self) {
 	if (!self) {
 		return;
 	}
@@ -123,7 +123,7 @@ void tini_destroy(tini_ptr_t self) {
 	free(self);
 }
 
-void tini_clear(tini_ptr_t self) {
+void tini_clear(tini_t *self) {
 	if (!self) {
 		return;
 	}
@@ -138,7 +138,7 @@ void tini_clear(tini_ptr_t self) {
 	self->last_error = TinyError_Normal;
 }
 
-int tini_load(tini_ptr_t self, const char *path) {
+int tini_load(tini_t *self, const char *path) {
 	if (!self) {
 		return -1;
 	}
@@ -272,7 +272,7 @@ int tini_load(tini_ptr_t self, const char *path) {
 	return 0;
 }
 
-int tini_save_to(tini_ptr_t self, const char *path) {
+int tini_save_to(tini_t *self, const char *path) {
 	if (!self) {
 		return -1;
 	}
@@ -304,7 +304,7 @@ int tini_save_to(tini_ptr_t self, const char *path) {
 // ERROR HANDLING
 // ============================================================================
 
-int tini_last_error(tini_cptr_t self) {
+int tini_last_error(const tini_t *self) {
 	return self ? self->last_error : -1;
 }
 
@@ -324,7 +324,7 @@ const char *tini_error_string(int code) {
 // SECTION OPERATIONS
 // ============================================================================
 
-tini_section_t *tini_get_section(tini_ptr_t self, const char *name) {
+tini_section_t *tini_get_section(tini_t *self, const char *name) {
 	if (!self || !name) {
 		return NULL;
 	}
@@ -347,7 +347,7 @@ tini_section_t *tini_get_section(tini_ptr_t self, const char *name) {
 	return section;
 }
 
-tini_section_t *tini_find_section(tini_ptr_t self, const char *name) {
+tini_section_t *tini_find_section(tini_t *self, const char *name) {
 	if (!self || !name) {
 		return NULL;
 	}
@@ -362,7 +362,7 @@ tini_section_t *tini_find_section(tini_ptr_t self, const char *name) {
 	return NULL;
 }
 
-int tini_remove_section(tini_ptr_t self, const char *name) {
+int tini_remove_section(tini_t *self, const char *name) {
 	if (!self || !name) {
 		return -1;
 	}
@@ -386,7 +386,7 @@ int tini_remove_section(tini_ptr_t self, const char *name) {
 	return self->last_error = TinyError_SectionNotFound;
 }
 
-tini_section_t *tini_first_section(tini_cptr_t self) {
+tini_section_t *tini_first_section(const tini_t *self) {
 	return self ? self->sections : NULL;
 }
 
@@ -498,7 +498,7 @@ const char *tini_key_name(const tini_key_t *key) {
 // CONVENIENCE FUNCTIONS
 // ============================================================================
 
-tini_key_t *tini_get_key(tini_ptr_t self, const char *section, const char *key) {
+tini_key_t *tini_get_key(tini_t *self, const char *section, const char *key) {
 	if (!self || !key) {
 		return NULL;
 	}
@@ -510,7 +510,7 @@ tini_key_t *tini_get_key(tini_ptr_t self, const char *section, const char *key) 
 	return tini_section_get_key(sec, key);
 }
 
-tini_key_t *tini_find_key(tini_ptr_t self, const char *section, const char *key) {
+tini_key_t *tini_find_key(tini_t *self, const char *section, const char *key) {
 	if (!self || !key) {
 		return NULL;
 	}

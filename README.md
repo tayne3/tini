@@ -30,7 +30,7 @@ cmake --build .
 **Initialization**:
 
 ```c
-tini_ptr_t tini = tini_create("config.ini");
+tini_t * tini = tini_create("config.ini");
 ```
 
 **Reading Values**:
@@ -49,7 +49,7 @@ const char *value = tini_key_get(key, "default");
 #include <stdio.h>
 
 int main(void) {
-    tini_ptr_t tini = tini_create("/path/to/config.ini");
+    tini_t * tini = tini_create("/path/to/config.ini");
     if (!tini) {
         return 1;
     }

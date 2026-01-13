@@ -1,7 +1,7 @@
 #include "test_common.h"
 
 void test_last_error_after_success(void) {
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 	assert_not_null(ini);
 	assert_int_eq(0, tini_last_error(ini));
 
@@ -17,13 +17,13 @@ void test_error_string(void) {
 }
 
 void test_create_nonexistent_file(void) {
-	tini_ptr_t ini = tini_create(test_res_path("this_file_does_not_exist.ini"));
+	tini_t *ini = tini_create(test_res_path("this_file_does_not_exist.ini"));
 	assert_not_null(ini);
 	tini_destroy(ini);
 }
 
 void test_save_to_invalid_path(void) {
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 	assert_not_null(ini);
 	assert_int_ne(0, tini_save_to(ini, "/nonexistent/path/test.ini"));
 
@@ -36,7 +36,7 @@ void test_malformed_missing_section_close(void) {
 
 	test_write_temp_ini("malformed1.ini", content);
 
-	tini_ptr_t ini = tini_create(test_tmp_path("malformed1.ini"));
+	tini_t *ini = tini_create(test_tmp_path("malformed1.ini"));
 	if (ini) {
 		tini_destroy(ini);
 	}
@@ -51,7 +51,7 @@ void test_malformed_key_without_value(void) {
 
 	test_write_temp_ini("malformed2.ini", content);
 
-	tini_ptr_t ini = tini_create(test_tmp_path("malformed2.ini"));
+	tini_t *ini = tini_create(test_tmp_path("malformed2.ini"));
 
 	if (ini) {
 		tini_section_t *sec = tini_find_section(ini, "section");
@@ -75,7 +75,7 @@ void test_malformed_duplicate_sections(void) {
 
 	test_write_temp_ini("duplicate.ini", content);
 
-	tini_ptr_t ini = tini_create(test_tmp_path("duplicate.ini"));
+	tini_t *ini = tini_create(test_tmp_path("duplicate.ini"));
 	assert_not_null(ini);
 
 	tini_section_t *sec = tini_find_section(ini, "section");
@@ -95,7 +95,7 @@ void test_malformed_duplicate_keys(void) {
 
 	test_write_temp_ini("dupkey.ini", content);
 
-	tini_ptr_t ini = tini_create(test_tmp_path("dupkey.ini"));
+	tini_t *ini = tini_create(test_tmp_path("dupkey.ini"));
 	assert_not_null(ini);
 
 	tini_section_t *sec = tini_find_section(ini, "section");

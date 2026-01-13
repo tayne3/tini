@@ -1,7 +1,7 @@
 #include "test_common.h"
 
 void test_add_key(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_key_t *key = tini_section_add_key(sec, "mykey", "myvalue");
@@ -12,7 +12,7 @@ void test_add_key(void) {
 }
 
 void test_get_key_creates(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_key_t *key = tini_section_get_key(sec, "newkey");
@@ -25,7 +25,7 @@ void test_get_key_creates(void) {
 }
 
 void test_find_key_does_not_create(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_key_t *key = tini_section_find_key(sec, "nonexistent");
@@ -35,7 +35,7 @@ void test_find_key_does_not_create(void) {
 }
 
 void test_has_key(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	assert_false(tini_section_has_key(sec, "key1"));
@@ -47,7 +47,7 @@ void test_has_key(void) {
 }
 
 void test_key_case_insensitivity(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_section_add_key(sec, "MyKey", "value");
@@ -68,7 +68,7 @@ void test_key_complex_names(void) {
 		"key with spaces",
 	};
 
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	for (size_t i = 0; i < sizeof(names) / sizeof(names[0]); ++i) {
@@ -83,7 +83,7 @@ void test_key_complex_names(void) {
 }
 
 void test_key_set_value(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_key_t *key = tini_section_add_key(sec, "key", "original");
@@ -96,7 +96,7 @@ void test_key_set_value(void) {
 }
 
 void test_overwrite_key(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_section_add_key(sec, "key", "value1");
@@ -110,7 +110,7 @@ void test_overwrite_key(void) {
 }
 
 void test_key_remove(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_section_add_key(sec, "to_remove", "value");
@@ -123,7 +123,7 @@ void test_key_remove(void) {
 }
 
 void test_remove_key_not_found(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	assert_int_ne(0, tini_section_remove_key(sec, "nonexistent"));
@@ -132,7 +132,7 @@ void test_remove_key_not_found(void) {
 }
 
 void test_remove_key_case_insensitive(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_section_add_key(sec, "MyKey", "value");
@@ -144,7 +144,7 @@ void test_remove_key_case_insensitive(void) {
 }
 
 void test_direct_get_key(void) {
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 
 	tini_key_t *key = tini_get_key(ini, "section", "key");
 	assert_not_null(key);
@@ -156,7 +156,7 @@ void test_direct_get_key(void) {
 }
 
 void test_direct_find_key(void) {
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 
 	assert_null(tini_find_key(ini, "section", "key"));
 
@@ -171,7 +171,7 @@ void test_direct_find_key(void) {
 }
 
 void test_direct_key_default_section(void) {
-	tini_ptr_t  ini       = tini_empty();
+	tini_t     *ini       = tini_empty();
 	tini_key_t *key_null  = tini_get_key(ini, NULL, "default_key");
 	tini_key_t *key_empty = tini_get_key(ini, "", "default_key");
 

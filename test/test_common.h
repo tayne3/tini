@@ -63,7 +63,7 @@ static inline void test_remove_temp_ini(const char *filename) {
  * @brief Set a key-value pair in a section (creating the section if needed).
  * @return 0 on success, -1 if section creation fails.
  */
-static inline int test_set_value(tini_ptr_t ini, const char *section, const char *key, const char *value) {
+static inline int test_set_value(tini_t *ini, const char *section, const char *key, const char *value) {
 	tini_section_t *sec = tini_get_section(ini, section);
 	if (!sec)
 		return -1;
@@ -74,7 +74,7 @@ static inline int test_set_value(tini_ptr_t ini, const char *section, const char
 /**
  * @brief Get a value from a section/key, returning default if not found.
  */
-static inline void test_get_value(tini_ptr_t ini, const char *section, const char *key, const char *default_value,
+static inline void test_get_value(tini_t *ini, const char *section, const char *key, const char *default_value,
 								  char *buffer, size_t size) {
 	tini_section_t *sec = tini_find_section(ini, section);
 	if (!sec) {
@@ -91,7 +91,7 @@ static inline void test_get_value(tini_ptr_t ini, const char *section, const cha
 /**
  * @brief Check if a key exists in a section.
  */
-static inline bool test_contains(tini_ptr_t ini, const char *section, const char *key) {
+static inline bool test_contains(tini_t *ini, const char *section, const char *key) {
 	tini_section_t *sec = tini_find_section(ini, section);
 	return sec ? tini_section_has_key(sec, key) : false;
 }
@@ -100,7 +100,7 @@ static inline bool test_contains(tini_ptr_t ini, const char *section, const char
  * @brief Remove a key from a section.
  * @return 0 on success, -1 if section not found.
  */
-static inline int test_remove_key(tini_ptr_t ini, const char *section, const char *key) {
+static inline int test_remove_key(tini_t *ini, const char *section, const char *key) {
 	tini_section_t *sec = tini_find_section(ini, section);
 	return sec ? tini_section_remove_key(sec, key) : -1;
 }

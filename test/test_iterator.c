@@ -1,7 +1,7 @@
 #include "test_common.h"
 
 void test_section_iter_empty(void) {
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 
 	tini_section_t *sec = tini_first_section(ini);
 	assert_null(sec);
@@ -10,7 +10,7 @@ void test_section_iter_empty(void) {
 }
 
 void test_section_iter_single(void) {
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 	tini_get_section(ini, "only");
 
 	tini_section_t *sec = tini_first_section(ini);
@@ -23,7 +23,7 @@ void test_section_iter_single(void) {
 }
 
 void test_section_iter_multiple(void) {
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 
 	tini_get_section(ini, "a");
 	tini_get_section(ini, "b");
@@ -40,7 +40,7 @@ void test_section_iter_multiple(void) {
 }
 
 void test_section_name(void) {
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 
 	tini_section_t *sec = tini_get_section(ini, "TestSection");
 	assert_str_eq("TestSection", tini_section_name(sec));
@@ -58,7 +58,7 @@ void test_section_iter_null_safety(void) {
 }
 
 void test_key_iter_empty(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_key_t *key = tini_section_first_key(sec);
@@ -68,7 +68,7 @@ void test_key_iter_empty(void) {
 }
 
 void test_key_iter_single(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 	tini_section_add_key(sec, "only_key", "value");
 
@@ -83,7 +83,7 @@ void test_key_iter_single(void) {
 }
 
 void test_key_iter_multiple(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_section_add_key(sec, "key1", "v1");
@@ -101,7 +101,7 @@ void test_key_iter_multiple(void) {
 }
 
 void test_key_name(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_key_t *key = tini_section_add_key(sec, "MyKey", "value");
@@ -117,7 +117,7 @@ void test_key_iter_null_safety(void) {
 }
 
 void test_full_enumeration(void) {
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 
 	for (int i = 1; i <= 3; i++) {
 		char sec_name[32];

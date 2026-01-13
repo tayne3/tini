@@ -1,19 +1,19 @@
 #include "test_common.h"
 
 void test_create_from_file(void) {
-	tini_ptr_t ini = tini_create(test_res_path("basic.ini"));
+	tini_t *ini = tini_create(test_res_path("basic.ini"));
 	assert_not_null(ini);
 	tini_destroy(ini);
 }
 
 void test_create_file_not_found(void) {
-	tini_ptr_t ini = tini_create(test_res_path("nonexistent.ini"));
+	tini_t *ini = tini_create(test_res_path("nonexistent.ini"));
 	assert_not_null(ini);
 	tini_destroy(ini);
 }
 
 void test_create_empty(void) {
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 	assert_not_null(ini);
 	tini_destroy(ini);
 }
@@ -24,7 +24,7 @@ void test_destroy_null(void) {
 
 void test_multiple_create_destroy_cycles(void) {
 	for (int i = 0; i < 100; i++) {
-		tini_ptr_t ini = tini_empty();
+		tini_t *ini = tini_empty();
 		assert_not_null(ini);
 
 		tini_section_t *sec = tini_get_section(ini, "test");
@@ -37,7 +37,7 @@ void test_multiple_create_destroy_cycles(void) {
 void test_save_to_file(void) {
 	const char *path = test_tmp_path("save_test.ini");
 
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 	assert_not_null(ini);
 
 	tini_section_t *sec = tini_get_section(ini, "section1");
@@ -53,7 +53,7 @@ void test_save_to_file(void) {
 void test_save_then_reload(void) {
 	const char *path = test_tmp_path("reload_test.ini");
 
-	tini_ptr_t      ini1 = tini_empty();
+	tini_t         *ini1 = tini_empty();
 	tini_section_t *sec1 = tini_get_section(ini1, "data");
 	tini_section_add_key(sec1, "name", "test");
 	tini_section_add_key(sec1, "count", "42");
@@ -61,7 +61,7 @@ void test_save_then_reload(void) {
 	assert_int_eq(0, tini_save_to(ini1, path));
 	tini_destroy(ini1);
 
-	tini_ptr_t ini2 = tini_create(path);
+	tini_t *ini2 = tini_create(path);
 	assert_not_null(ini2);
 
 	tini_section_t *sec2 = tini_find_section(ini2, "data");
@@ -82,11 +82,11 @@ void test_save_then_reload(void) {
 void test_save_empty_ini(void) {
 	const char *path = test_tmp_path("empty_save.ini");
 
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 	assert_int_eq(0, tini_save_to(ini, path));
 	tini_destroy(ini);
 
-	tini_ptr_t ini2 = tini_create(path);
+	tini_t *ini2 = tini_create(path);
 	assert_not_null(ini2);
 	tini_destroy(ini2);
 
@@ -94,7 +94,7 @@ void test_save_empty_ini(void) {
 }
 
 void test_lifecycle_clear_and_reuse(void) {
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 	assert_not_null(ini);
 
 	tini_section_t *sec = tini_get_section(ini, "first");
@@ -117,7 +117,7 @@ void test_lifecycle_clear_and_reuse(void) {
 }
 
 void test_lifecycle_clear_idempotency(void) {
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 
 	tini_clear(ini);
 	assert_null(tini_first_section(ini));
@@ -140,7 +140,7 @@ void test_lifecycle_load_merge_distinct(void) {
 	test_write_temp_ini("part2.ini", "[B]\n"
 									 "key2=2\n");
 
-	tini_ptr_t ini = tini_create(path1);
+	tini_t *ini = tini_create(path1);
 	assert_not_null(ini);
 
 	assert_int_eq(0, tini_load(ini, path2));
@@ -167,7 +167,7 @@ void test_lifecycle_load_merge_overwrite(void) {
 	test_write_temp_ini("override.ini", "[config]\n"
 										"sharding=on\n");
 
-	tini_ptr_t ini = tini_create(path_def);
+	tini_t *ini = tini_create(path_def);
 	assert_not_null(ini);
 
 	assert_int_eq(0, tini_load(ini, path_ovr));
@@ -191,7 +191,7 @@ void test_lifecycle_load_failure_preservation(void) {
 	test_write_temp_ini("ok.ini", "[data]\n"
 								  "id=1\n");
 
-	tini_ptr_t ini = tini_create(path_ok);
+	tini_t *ini = tini_create(path_ok);
 
 	assert_int_ne(0, tini_load(ini, "nonexistent.ini"));
 	assert_int_ne(0, tini_last_error(ini));

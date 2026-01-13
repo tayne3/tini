@@ -1,7 +1,7 @@
 #include "test_common.h"
 
 void test_get_section_creates(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "new_section");
 	assert_not_null(sec);
 	tini_section_t *found = tini_find_section(ini, "new_section");
@@ -11,14 +11,14 @@ void test_get_section_creates(void) {
 }
 
 void test_find_section_does_not_create(void) {
-	tini_ptr_t      ini = tini_empty();
+	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_find_section(ini, "nonexistent");
 	assert_null(sec);
 	tini_destroy(ini);
 }
 
 void test_section_case_insensitivity(void) {
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 
 	tini_section_t *sec = tini_get_section(ini, "TestSection");
 	tini_section_add_key(sec, "key", "value");
@@ -32,7 +32,7 @@ void test_section_case_insensitivity(void) {
 }
 
 void test_section_empty_name(void) {
-	tini_ptr_t      ini       = tini_empty();
+	tini_t         *ini       = tini_empty();
 	tini_section_t *sec_empty = tini_get_section(ini, "");
 	assert_not_null(sec_empty);
 	tini_section_t *sec_null = tini_get_section(ini, NULL);
@@ -46,7 +46,7 @@ void test_section_complex_names(void) {
 		"Section One", "Section_Two", "Section-Three", "Sec.tion.Four", "Sec@tion#Five",
 	};
 
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 
 	for (size_t i = 0; i < sizeof(names) / sizeof(names[0]); ++i) {
 		tini_section_t *sec = tini_get_section(ini, names[i]);
@@ -61,7 +61,7 @@ void test_section_complex_names(void) {
 }
 
 void test_remove_section(void) {
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 
 	tini_section_t *sec = tini_get_section(ini, "to_remove");
 	tini_section_add_key(sec, "key", "value");
@@ -76,14 +76,14 @@ void test_remove_section(void) {
 }
 
 void test_remove_section_not_found(void) {
-	tini_ptr_t ini    = tini_empty();
-	int        result = tini_remove_section(ini, "nonexistent");
+	tini_t *ini    = tini_empty();
+	int     result = tini_remove_section(ini, "nonexistent");
 	assert_int_ne(0, result);
 	tini_destroy(ini);
 }
 
 void test_remove_section_case_insensitive(void) {
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 
 	tini_get_section(ini, "MySection");
 	assert_int_eq(0, tini_remove_section(ini, "mysection"));
@@ -94,7 +94,7 @@ void test_remove_section_case_insensitive(void) {
 }
 
 void test_many_sections(void) {
-	tini_ptr_t ini = tini_empty();
+	tini_t *ini = tini_empty();
 
 	for (int i = 0; i < 100; i++) {
 		char name[32];

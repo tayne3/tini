@@ -8,7 +8,7 @@ void test_inline_comments_semicolon(void) {
 
 	test_write_temp_ini("inline_semi.ini", content);
 
-	tini_ptr_t ini = tini_create(test_tmp_path("inline_semi.ini"));
+	tini_t *ini = tini_create(test_tmp_path("inline_semi.ini"));
 	assert_not_null(ini);
 
 	tini_section_t *sec = tini_find_section(ini, "comments");
@@ -29,7 +29,7 @@ void test_inline_comments_hash(void) {
 
 	test_write_temp_ini("inline_hash.ini", content);
 
-	tini_ptr_t ini = tini_create(test_tmp_path("inline_hash.ini"));
+	tini_t *ini = tini_create(test_tmp_path("inline_hash.ini"));
 	assert_not_null(ini);
 
 	tini_section_t *sec = tini_find_section(ini, "comments");
@@ -50,7 +50,7 @@ void test_double_quotes(void) {
 
 	test_write_temp_ini("double_quotes.ini", content);
 
-	tini_ptr_t ini = tini_create(test_tmp_path("double_quotes.ini"));
+	tini_t *ini = tini_create(test_tmp_path("double_quotes.ini"));
 	assert_not_null(ini);
 
 	tini_section_t *sec = tini_find_section(ini, "quotes");
@@ -71,7 +71,7 @@ void test_single_quotes(void) {
 
 	test_write_temp_ini("single_quotes.ini", content);
 
-	tini_ptr_t ini = tini_create(test_tmp_path("single_quotes.ini"));
+	tini_t *ini = tini_create(test_tmp_path("single_quotes.ini"));
 	assert_not_null(ini);
 
 	tini_section_t *sec = tini_find_section(ini, "quotes");
@@ -92,7 +92,7 @@ void test_quotes_protect_comments(void) {
 
 	test_write_temp_ini("quotes_comment.ini", content);
 
-	tini_ptr_t ini = tini_create(test_tmp_path("quotes_comment.ini"));
+	tini_t *ini = tini_create(test_tmp_path("quotes_comment.ini"));
 	assert_not_null(ini);
 
 	tini_section_t *sec = tini_find_section(ini, "quotes");
@@ -113,7 +113,7 @@ void test_whitespace_trimming(void) {
 
 	test_write_temp_ini("whitespace.ini", content);
 
-	tini_ptr_t ini = tini_create(test_tmp_path("whitespace.ini"));
+	tini_t *ini = tini_create(test_tmp_path("whitespace.ini"));
 	assert_not_null(ini);
 
 	tini_section_t *sec = tini_find_section(ini, "whitespace");
@@ -136,7 +136,7 @@ void test_preserved_whitespace_in_quotes(void) {
 
 	test_write_temp_ini("ws_quotes.ini", content);
 
-	tini_ptr_t ini = tini_create(test_tmp_path("ws_quotes.ini"));
+	tini_t *ini = tini_create(test_tmp_path("ws_quotes.ini"));
 	assert_not_null(ini);
 
 	tini_section_t *sec = tini_find_section(ini, "ws");
@@ -148,7 +148,7 @@ void test_preserved_whitespace_in_quotes(void) {
 }
 
 void test_utf8_parsing(void) {
-	tini_ptr_t ini = tini_create(test_res_path("unicode.ini"));
+	tini_t *ini = tini_create(test_res_path("unicode.ini"));
 	assert_not_null(ini);
 	tini_destroy(ini);
 }
@@ -169,7 +169,7 @@ void test_massive_line(void) {
 		fclose(fp);
 	}
 
-	tini_ptr_t ini = tini_create(test_tmp_path("massive.ini"));
+	tini_t *ini = tini_create(test_tmp_path("massive.ini"));
 	assert_not_null(ini);
 
 	tini_section_t *sec = tini_find_section(ini, "massive");
@@ -193,7 +193,7 @@ void test_global_keys(void) {
 
 	test_write_temp_ini("global.ini", content);
 
-	tini_ptr_t ini = tini_create(test_tmp_path("global.ini"));
+	tini_t *ini = tini_create(test_tmp_path("global.ini"));
 	assert_not_null(ini);
 
 	tini_section_t *global = tini_find_section(ini, "");

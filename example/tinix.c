@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 			return 1;
 		}
 
-		tini_ptr_t tini = tini_create(argv[2]);
+		tini_t *tini = tini_create(argv[2]);
 		if (!tini) {
 			printf("Failed to create tini object." STR_NEWLINE);
 			return 1;
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 			printf("Invalid number of arguments for 'set' command. Use 'help' command for instructions." STR_NEWLINE);
 			return 1;
 		}
-		tini_ptr_t tini = tini_create(argv[2]);
+		tini_t *tini = tini_create(argv[2]);
 		if (!tini) {
 			printf("Failed to create tini object." STR_NEWLINE);
 			return 1;
@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
 			printf("Invalid number of arguments for 'rm' command. Use 'help' command for instructions." STR_NEWLINE);
 			return 1;
 		}
-		tini_ptr_t tini = tini_create(argv[2]);
+		tini_t *tini = tini_create(argv[2]);
 		if (!tini) {
 			printf("Failed to create tini object." STR_NEWLINE);
 			return 1;
