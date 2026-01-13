@@ -339,6 +339,7 @@ TINI_API bool tini_key_get_bool(const tini_key_t *key, bool default_value);
 
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 namespace tini {
@@ -365,13 +366,9 @@ public:
 	TINI_API void set(const std::string &value) { tini_key_set_value(d, value.c_str()); }
 	TINI_API void setValue(const std::string &value) { set(value); }
 	TINI_API void setValue(const char *value) { set(value); }
-	TINI_API void setValue(int value) { set(std::to_string(value)); }
-	TINI_API void setValue(long value) { set(std::to_string(value)); }
-	TINI_API void setValue(unsigned long value) { set(std::to_string(value)); }
-	TINI_API void setValue(int64_t value) { set(std::to_string(value)); }
-	TINI_API void setValue(uint64_t value) { set(std::to_string(value)); }
-	TINI_API void setValue(double value) { set(std::to_string(value)); }
-	TINI_API void setValue(bool value) { set(value ? "true" : "false"); }
+	template <typename T> TINI_API typename std::enable_if<std::is_arithmetic<T>::value, void>::type setValue(T value) {
+		set(std::to_string(value));
+	}
 
 private:
 	tini_key_t *d;
