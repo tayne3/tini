@@ -26,31 +26,25 @@ if(PROJECT_IS_TOP_LEVEL)
   )
     message(STATUS "Setting build type to 'Release' as none was specified.")
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS 
-              "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
   endif()
 
   if(NOT DEFINED ENV{CPM_SOURCE_CACHE})
     set(ENV{CPM_SOURCE_CACHE} ${CMAKE_SOURCE_DIR}/cmake_modules)
   endif()
     
-  if(PROJECT_IS_TOP_LEVEL AND NOT DEFINED CMAKE_C_VISIBILITY_PRESET)
-    cmake_parse_arguments(CMAKE_C_VISIBILITY_PRESET hidden CACHE STRING
-                "Preset for the export of private symbols")
-    set_property(CACHE CMAKE_C_VISIBILITY_PRESET PROPERTY STRINGS
-                hidden default)
+  if(NOT DEFINED CMAKE_C_VISIBILITY_PRESET)
+    set(CMAKE_C_VISIBILITY_PRESET hidden CACHE STRING "Preset for the export of private symbols")
+    set_property(CACHE CMAKE_C_VISIBILITY_PRESET PROPERTY STRINGS hidden default)
   endif()
 
-  if(PROJECT_IS_TOP_LEVEL AND NOT DEFINED CMAKE_CXX_VISIBILITY_PRESET)
-    cmake_parse_arguments(CMAKE_CXX_VISIBILITY_PRESET hidden CACHE STRING
-                "Preset for the export of private symbols")
-    set_property(CACHE CMAKE_CXX_VISIBILITY_PRESET PROPERTY STRINGS
-                hidden default)
+  if(NOT DEFINED CMAKE_CXX_VISIBILITY_PRESET)
+    set(CMAKE_CXX_VISIBILITY_PRESET hidden CACHE STRING "Preset for the export of private symbols")
+    set_property(CACHE CMAKE_CXX_VISIBILITY_PRESET PROPERTY STRINGS hidden default)
   endif()
 
-  if(PROJECT_IS_TOP_LEVEL AND NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDDEN)
-    cmake_parse_arguments(CMAKE_VISIBILITY_INLINES_HIDDEN ON CACHE BOOL
-                "Whether to add a compile flag to hide symbols of inline functions")
+  if(NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDDEN)
+    set(CMAKE_VISIBILITY_INLINES_HIDDEN ON CACHE BOOL "Whether to add a compile flag to hide symbols of inline functions")
   endif()
   
   set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
