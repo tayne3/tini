@@ -343,44 +343,58 @@ TINI_API bool tini_key_get_bool(const tini_key_t *key, bool default_value);
 
 namespace tini {
 
-class TINI_API Key {
+class Key {
 public:
-	explicit Key(tini_key_t *k) : d(k) {}
-	bool        valid() const { return d != nullptr; }
-	explicit    operator bool() const { return valid(); }
-	const char *name() const { return tini_key_name(d); }
-	Key         next() const { return Key(tini_key_next(d)); }
+	TINI_API explicit Key(tini_key_t *k) : d(k) {}
+	TINI_API bool     valid() const { return d != nullptr; }
+	TINI_API explicit operator bool() const { return valid(); }
+	TINI_API std::string name() const { return tini_key_name(d); }
+	TINI_API Key         next() const { return Key(tini_key_next(d)); }
 
-	void        setValue(const char *value) { tini_key_set_value(d, value); }
-	const char *getValue() const { return tini_key_get_value(d); }
-	const char *get(const char *def = nullptr) const { return tini_key_get(d, def); }
-	const char *getString(const char *def = nullptr) const { return tini_key_get_string(d, def); }
-	int         getInt(int def = 0) const { return tini_key_get_int(d, def); }
-	int64_t     getI64(int64_t def = 0) const { return tini_key_get_i64(d, def); }
-	uint64_t    getU64(uint64_t def = 0) const { return tini_key_get_u64(d, def); }
-	double      getDouble(double def = 0.0) const { return tini_key_get_double(d, def); }
-	bool        getBool(bool def = false) const { return tini_key_get_bool(d, def); }
+	TINI_API std::string get(const std::string &def = "") const { return tini_key_get(d, def.c_str()); }
+	TINI_API std::string getValue() const { return tini_key_get_value(d); }
+	TINI_API std::string   getString(const std::string &def = "") const { return tini_key_get_string(d, def.c_str()); }
+	TINI_API int           getInt(int def = 0) const { return tini_key_get_int(d, def); }
+	TINI_API long          getInteger(long def = 0) const { return tini_key_get_i64(d, def); }
+	TINI_API unsigned long getUnsigned(unsigned long def = 0) const { return tini_key_get_u64(d, def); }
+	TINI_API int64_t       getI64(int64_t def = 0) const { return tini_key_get_i64(d, def); }
+	TINI_API uint64_t      getU64(uint64_t def = 0) const { return tini_key_get_u64(d, def); }
+	TINI_API double        getDouble(double def = 0.0) const { return tini_key_get_double(d, def); }
+	TINI_API bool          getBool(bool def = false) const { return tini_key_get_bool(d, def); }
+
+	TINI_API void set(const std::string &value) { tini_key_set_value(d, value.c_str()); }
+	TINI_API void setValue(const std::string &value) { set(value); }
+	TINI_API void setValue(const char *value) { set(value); }
+	TINI_API void setValue(int value) { set(std::to_string(value)); }
+	TINI_API void setValue(long value) { set(std::to_string(value)); }
+	TINI_API void setValue(unsigned long value) { set(std::to_string(value)); }
+	TINI_API void setValue(int64_t value) { set(std::to_string(value)); }
+	TINI_API void setValue(uint64_t value) { set(std::to_string(value)); }
+	TINI_API void setValue(double value) { set(std::to_string(value)); }
+	TINI_API void setValue(bool value) { set(value ? "true" : "false"); }
 
 private:
 	tini_key_t *d;
 };
 
-class TINI_API Section {
+class Section {
 public:
-	explicit Section(tini_section_t *s) : d(s) {}
-	bool        valid() const { return d != nullptr; }
-	explicit    operator bool() const { return valid(); }
-	const char *name() const { return tini_section_name(d); }
-	Key         firstKey() const { return Key(tini_section_first_key(d)); }
-	Section     next() const { return Section(tini_section_next(d)); }
+	TINI_API explicit Section(tini_section_t *s) : d(s) {}
+	TINI_API bool     valid() const { return d != nullptr; }
+	TINI_API explicit operator bool() const { return valid(); }
+	TINI_API std::string name() const { return tini_section_name(d); }
+	TINI_API Key         firstKey() const { return Key(tini_section_first_key(d)); }
+	TINI_API Section     next() const { return Section(tini_section_next(d)); }
 
-	Key  getKey(const char *key) { return Key(tini_section_get_key(d, key)); }
-	Key  findKey(const char *key) const { return Key(tini_section_find_key(d, key)); }
-	bool hasKey(const char *key) const { return tini_section_has_key(d, key); }
-	Key  addKey(const char *key, const char *value) { return Key(tini_section_add_key(d, key, value)); }
-	int  removeKey(const char *key) { return tini_section_remove_key(d, key); }
+	TINI_API Key  getKey(const std::string &key) { return Key(tini_section_get_key(d, key.c_str())); }
+	TINI_API Key  findKey(const std::string &key) const { return Key(tini_section_find_key(d, key.c_str())); }
+	TINI_API bool hasKey(const std::string &key) const { return tini_section_has_key(d, key.c_str()); }
+	TINI_API Key  addKey(const std::string &key, const std::string &value = "") {
+        return Key(tini_section_add_key(d, key.c_str(), value.c_str()));
+	}
+	TINI_API int removeKey(const std::string &key) { return tini_section_remove_key(d, key.c_str()); }
 
-	std::vector<std::string> keys() const {
+	TINI_API std::vector<std::string> keys() const {
 		std::vector<std::string> result;
 		for (Key k = firstKey(); k; k = k.next()) {
 			result.emplace_back(k.name());
@@ -392,17 +406,17 @@ private:
 	tini_section_t *d;
 };
 
-class TINI_API Ini {
+class Ini {
 public:
-	Ini() : d(tini_empty()) {
+	TINI_API Ini() : d(tini_empty()) {
 		if (!d) {
 			throw std::bad_alloc();
 		}
 	}
-	~Ini() { tini_destroy(d); }
+	TINI_API ~Ini() { tini_destroy(d); }
 
-	Ini(Ini &&o) noexcept : d(o.d) { o.d = nullptr; }
-	Ini &operator=(Ini &&o) noexcept {
+	TINI_API      Ini(Ini &&o) noexcept : d(o.d) { o.d = nullptr; }
+	TINI_API Ini &operator=(Ini &&o) noexcept {
 		if (this != &o) {
 			tini_destroy(d);
 			d   = o.d;
@@ -413,23 +427,27 @@ public:
 	Ini(const Ini &)            = delete;
 	Ini &operator=(const Ini &) = delete;
 
-	int                lastError() const { return tini_last_error(d); }
-	static const char *errorString(int code) { return tini_error_string(code); }
+	TINI_API int                lastError() const { return tini_last_error(d); }
+	TINI_API static const char *errorString(int code) { return tini_error_string(code); }
 
-	int  load(const char *path) { return tini_load(d, path); }
-	void clear() { tini_clear(d); }
-	int  saveTo(const char *path) { return tini_save_to(d, path); }
+	TINI_API int  load(const std::string &path) { return tini_load(d, path.c_str()); }
+	TINI_API void clear() { tini_clear(d); }
+	TINI_API int  saveTo(const std::string &path) { return tini_save_to(d, path.c_str()); }
 
-	Section getSection(const char *name) { return Section(tini_get_section(d, name)); }
-	Section findSection(const char *name) const { return Section(tini_find_section(d, name)); }
-	int     removeSection(const char *name) { return tini_remove_section(d, name); }
+	TINI_API Section getSection(const std::string &name) { return Section(tini_get_section(d, name.c_str())); }
+	TINI_API Section findSection(const std::string &name) const { return Section(tini_find_section(d, name.c_str())); }
+	TINI_API int     removeSection(const std::string &name) { return tini_remove_section(d, name.c_str()); }
 
-	Key getKey(const char *section, const char *key) { return Key(tini_get_key(d, section, key)); }
-	Key findKey(const char *section, const char *key) const { return Key(tini_find_key(d, section, key)); }
+	TINI_API Key getKey(const std::string &section, const std::string &key) {
+		return Key(tini_get_key(d, section.c_str(), key.c_str()));
+	}
+	TINI_API Key findKey(const std::string &section, const std::string &key) const {
+		return Key(tini_find_key(d, section.c_str(), key.c_str()));
+	}
 
-	Section firstSection() const { return Section(tini_first_section(d)); }
+	TINI_API Section firstSection() const { return Section(tini_first_section(d)); }
 
-	std::vector<std::string> sections() const {
+	TINI_API std::vector<std::string> sections() const {
 		std::vector<std::string> result;
 		for (Section s = firstSection(); s; s = s.next()) {
 			result.emplace_back(s.name());

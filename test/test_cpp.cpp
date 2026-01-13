@@ -8,18 +8,18 @@ static void test_cpp_basic(void) {
 	tini::Ini ini;
 	assert_int_eq(0, ini.lastError());
 	ini.getSection("test").addKey("foo", "bar1");
-	assert_str_eq("bar1", ini.getSection("test").getKey("foo").getString());
+	assert_str_eq("bar1", ini.getSection("test").getKey("foo").getString().c_str());
 	{
 		tini::Ini ini2 = std::move(ini);
-		assert_str_eq("bar1", ini2.getSection("test").getKey("foo").getString());
+		assert_str_eq("bar1", ini2.getSection("test").getKey("foo").getString().c_str());
 		ini2.getSection("test").addKey("foo", "bar2");
 		ini = std::move(ini2);
 	}
-	assert_str_eq("bar2", ini.getSection("test").getKey("foo").getString());
+	assert_str_eq("bar2", ini.getSection("test").getKey("foo").getString().c_str());
 
 	auto section = ini.getSection("network");
 	assert_true(section.valid());
-	assert_str_eq("network", section.name());
+	assert_str_eq("network", section.name().c_str());
 
 	section.addKey("host", "localhost");
 	assert_true(section.hasKey("host"));

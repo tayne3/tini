@@ -4,7 +4,8 @@ set(TEST_TEMP_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 function(tini_add_test name)
   add_executable(${name} ${ARGN})
   add_test(NAME ${name} COMMAND $<TARGET_FILE:${name}>)
-  target_link_libraries(${name} PRIVATE 
+  target_link_libraries(${name} PRIVATE
+    tini_compile_dependency
     tini::tini 
     cunit::cunit
   )

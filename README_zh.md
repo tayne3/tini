@@ -30,7 +30,7 @@ cmake --build .
 **初始化**:
 
 ```c
-tini_t * tini = tini_create("config.ini");
+tini_t *tini = tini_create("config.ini");
 ```
 
 **读取值**:
@@ -49,7 +49,7 @@ const char *value = tini_key_get(key, "default");
 #include <stdio.h>
 
 int main(void) {
-    tini_t * tini = tini_create("/path/to/config.ini");
+    tini_t *tini = tini_create("/path/to/config.ini");
     if (!tini) {
         return 1;
     }
@@ -65,5 +65,56 @@ int main(void) {
     tini_save_to(tini, "/path/to/config.ini");
     tini_destroy(tini);
     return 0;
+}
+```
+
+**C++ 示例**:
+
+```cpp
+#include "tini/tini.h"
+#include <iostream>
+
+int main() {
+    try {
+        tini::Ini ini;
+        if (ini.load("/path/to/config.ini") != 0) {
+            std::cerr << "Failed to load: "
+                      << tini::Ini::errorString(ini.lastError()) << std::endl;
+            return 1;
+        }
+
+        std::cout << "String value: " << ini.findKey("section1", "key1").getString("default") << std::endl;
+
+        auto key = ini.findKey("section1", "key1");
+        if (key) {
+            std::cout << "String value: " << key.getString("default") << std::endl;
+            std::cout << "Int value: " << key.getInt(0) << std::endl;
+            std::cout << "Bool value: " << key.getBool(false) << std::endl;
+            std::cout << "Double value: " << key.getDouble(0.0) << std::endl;
+        }
+
+        auto section = ini.getSection("section2");
+        section.addKey("port", "8080");
+        section.addKey("enabled", "true");
+        section.addKey("timeout", "30.5");
+        for (auto s = ini.firstSection(); s; s = s.next()) {
+            std::cout << "[" << s.name() << "]" << std::endl;
+            for (auto k = s.firstKey(); k; k = k.next()) {
+                std::cout << "  " << k.name() << " = " << k.getValue() << std::endl;
+            }
+        }
+
+        auto sections = ini.sections();
+        std::cout << "Total sections: " << sections.size() << std::endl;
+
+        if (ini.saveTo("/path/to/output.ini") != 0) {
+            std::cerr << "Failed to save" << std::endl;
+            return 1;
+        }
+        return 0;
+    } catch (const std::exception& e) {
+        std::cerr << "Exception: " << e.what() << std::endl;
+        return 1;
+    }
 }
 ```
