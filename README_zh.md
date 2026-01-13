@@ -71,50 +71,36 @@ int main(void) {
 **C++ 示例**:
 
 ```cpp
-#include "tini/tini.h"
 #include <iostream>
 
+#include "tini/tini.h"
+
 int main() {
-    try {
-        tini::Ini ini;
-        if (ini.load("/path/to/config.ini") != 0) {
-            std::cerr << "Failed to load: "
-                      << tini::Ini::errorString(ini.lastError()) << std::endl;
-            return 1;
-        }
+	try {
+		tini::Ini ini;
+		auto      section = ini.getSection("section");
+		section.addKey("key", "1");
+		section.addKey("enabled", "true").setValue(true);
+		section.addKey("timeout").setValue(30.5);
+		section.addKey("name", "tini");
 
-        std::cout << "String value: " << ini.findKey("section1", "key1").getString("default") << std::endl;
+		auto key = ini.getKey("section", "key");
+		std::cout << "Int value: " << key.getInt(0) << std::endl;
+		std::cout << "Bool value: " << ini.findKey("section", "enabled").getBool(false) << std::endl;
+		std::cout << "Double value: " << ini.findSection("section").findKey("timeout").getDouble(0.0) << std::endl;
+		std::cout << "String value: " << ini.findKey("section", "name").getString("default") << std::endl;
 
-        auto key = ini.findKey("section1", "key1");
-        if (key) {
-            std::cout << "String value: " << key.getString("default") << std::endl;
-            std::cout << "Int value: " << key.getInt(0) << std::endl;
-            std::cout << "Bool value: " << key.getBool(false) << std::endl;
-            std::cout << "Double value: " << key.getDouble(0.0) << std::endl;
-        }
-
-        auto section = ini.getSection("section2");
-        section.addKey("port", "8080");
-        section.addKey("enabled", "true");
-        section.addKey("timeout", "30.5");
-        for (auto s = ini.firstSection(); s; s = s.next()) {
-            std::cout << "[" << s.name() << "]" << std::endl;
-            for (auto k = s.firstKey(); k; k = k.next()) {
-                std::cout << "  " << k.name() << " = " << k.getValue() << std::endl;
-            }
-        }
-
-        auto sections = ini.sections();
-        std::cout << "Total sections: " << sections.size() << std::endl;
-
-        if (ini.saveTo("/path/to/output.ini") != 0) {
-            std::cerr << "Failed to save" << std::endl;
-            return 1;
-        }
-        return 0;
-    } catch (const std::exception& e) {
-        std::cerr << "Exception: " << e.what() << std::endl;
-        return 1;
-    }
+		std::cout << std::endl << "Total sections: " << ini.sections().size() << std::endl;
+		for (auto s = ini.firstSection(); s; s = s.next()) {
+			std::cout << "[" << s.name() << "]" << std::endl;
+			for (auto k = s.firstKey(); k; k = k.next()) {
+				std::cout << "  " << k.name() << " = " << k.getValue() << std::endl;
+			}
+		}
+		return 0;
+	} catch (const std::exception& e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		return 1;
+	}
 }
 ```
