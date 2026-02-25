@@ -2,38 +2,41 @@
 #include <limits.h>
 #include <math.h>
 
-#include "test_common.h"
+#include "common.hpp"
 
-void test_key_get(void) {
+#define CATCH_CONFIG_MAIN
+#include <catch.hpp>
+
+TEST_CASE("String Getters - tini_key_get", "[value_getter]") {
 	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 	tini_key_t     *key = tini_section_add_key(sec, "str", "hello");
-	assert_str_eq("hello", tini_key_get(key, "default"));
-	assert_str_eq("default", tini_key_get(NULL, "default"));
+	REQUIRE(std::string(tini_key_get(key, "default")) == "hello");
+	REQUIRE(std::string(tini_key_get(nullptr, "default")) == "default");
 
 	tini_key_t *empty_key = tini_section_add_key(sec, "empty", "");
-	assert_str_eq("", tini_key_get(empty_key, "default"));
+	REQUIRE(std::string(tini_key_get(empty_key, "default")) == "");
 
 	tini_destroy(ini);
 }
 
-void test_key_get_string(void) {
+TEST_CASE("String Getters - tini_key_get_string", "[value_getter]") {
 	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 	tini_key_t     *key = tini_section_add_key(sec, "str", "hello");
-	assert_str_eq("hello", tini_key_get_string(key, "default"));
+	REQUIRE(std::string(tini_key_get_string(key, "default")) == "hello");
 	tini_key_t *empty = tini_section_add_key(sec, "empty", "");
-	assert_str_eq("default", tini_key_get_string(empty, "default"));
+	REQUIRE(std::string(tini_key_get_string(empty, "default")) == "default");
 	tini_key_t *blank = tini_section_add_key(sec, "blank", "   \t  ");
-	assert_str_eq("default", tini_key_get_string(blank, "default"));
+	REQUIRE(std::string(tini_key_get_string(blank, "default")) == "default");
 	tini_key_t *padded = tini_section_add_key(sec, "padded", "  hello  ");
-	assert_str_eq("  hello  ", tini_key_get_string(padded, "default"));
-	assert_str_eq("default", tini_key_get_string(NULL, "default"));
+	REQUIRE(std::string(tini_key_get_string(padded, "default")) == "  hello  ");
+	REQUIRE(std::string(tini_key_get_string(nullptr, "default")) == "default");
 
 	tini_destroy(ini);
 }
 
-void test_key_get_int_valid(void) {
+TEST_CASE("Integer Getters - int valid", "[value_getter]") {
 	struct {
 		int         expected;
 		const char *value;
@@ -47,14 +50,14 @@ void test_key_get_int_valid(void) {
 
 	for (size_t i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i) {
 		tini_key_t *key = tini_section_add_key(sec, "int_val", cases[i].value);
-		assert_not_null(key);
-		assert_int_eq(cases[i].expected, tini_key_get_int(key, -999));
+		REQUIRE(key != nullptr);
+		REQUIRE(tini_key_get_int(key, -999) == cases[i].expected);
 	}
 
 	tini_destroy(ini);
 }
 
-void test_key_get_int_invalid(void) {
+TEST_CASE("Integer Getters - int invalid", "[value_getter]") {
 	const char *bad_values[] = {"", "notanumber", "0x", "k2000", "   ", "0xG1"};
 
 	tini_t         *ini = tini_empty();
@@ -62,14 +65,14 @@ void test_key_get_int_invalid(void) {
 
 	for (size_t i = 0; i < sizeof(bad_values) / sizeof(bad_values[0]); ++i) {
 		tini_key_t *key = tini_section_add_key(sec, "bad_int", bad_values[i]);
-		assert_int_eq((int)i, tini_key_get_int(key, i));
+		REQUIRE(tini_key_get_int(key, (int)i) == (int)i);
 	}
-	assert_int_eq(-999, tini_key_get_int(NULL, -999));
+	REQUIRE(tini_key_get_int(nullptr, -999) == -999);
 
 	tini_destroy(ini);
 }
 
-void test_key_get_i64_valid(void) {
+TEST_CASE("64-bit Integer Getters - i64 valid", "[value_getter]") {
 	struct {
 		int64_t     expected;
 		const char *value;
@@ -88,13 +91,13 @@ void test_key_get_i64_valid(void) {
 
 	for (size_t i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i) {
 		tini_key_t *key = tini_section_add_key(sec, "i64", cases[i].value);
-		assert_int64_eq(cases[i].expected, tini_key_get_i64(key, -999));
+		REQUIRE(tini_key_get_i64(key, -999) == cases[i].expected);
 	}
 
 	tini_destroy(ini);
 }
 
-void test_key_get_i64_invalid(void) {
+TEST_CASE("64-bit Integer Getters - i64 invalid", "[value_getter]") {
 	const char *bad_values[] = {"", "abc", "123abc", "0x", "0xGGG", "   "};
 
 	tini_t         *ini = tini_empty();
@@ -102,14 +105,14 @@ void test_key_get_i64_invalid(void) {
 
 	for (size_t i = 0; i < sizeof(bad_values) / sizeof(bad_values[0]); ++i) {
 		tini_key_t *key = tini_section_add_key(sec, "bad", bad_values[i]);
-		assert_int64_eq(-999, tini_key_get_i64(key, -999));
+		REQUIRE(tini_key_get_i64(key, -999) == -999);
 	}
-	assert_int64_eq(-999, tini_key_get_i64(NULL, -999));
+	REQUIRE(tini_key_get_i64(nullptr, -999) == -999);
 
 	tini_destroy(ini);
 }
 
-void test_key_get_u64_valid(void) {
+TEST_CASE("64-bit Integer Getters - u64 valid", "[value_getter]") {
 	struct {
 		uint64_t    expected;
 		const char *value;
@@ -126,13 +129,13 @@ void test_key_get_u64_valid(void) {
 
 	for (size_t i = 0; i < sizeof(cases) / sizeof(cases[0]); ++i) {
 		tini_key_t *key = tini_section_add_key(sec, "u64", cases[i].value);
-		assert_uint64_eq(cases[i].expected, tini_key_get_u64(key, 999));
+		REQUIRE(tini_key_get_u64(key, 999) == cases[i].expected);
 	}
 
 	tini_destroy(ini);
 }
 
-void test_key_get_u64_invalid(void) {
+TEST_CASE("64-bit Integer Getters - u64 invalid", "[value_getter]") {
 	const char *bad_values[] = {"", "-1", "-0", "abc", "123abc", "   "};
 
 	tini_t         *ini = tini_empty();
@@ -140,14 +143,14 @@ void test_key_get_u64_invalid(void) {
 
 	for (size_t i = 0; i < sizeof(bad_values) / sizeof(bad_values[0]); ++i) {
 		tini_key_t *key = tini_section_add_key(sec, "bad", bad_values[i]);
-		assert_uint64_eq(999, tini_key_get_u64(key, 999));
+		REQUIRE(tini_key_get_u64(key, 999) == 999);
 	}
-	assert_uint64_eq(999, tini_key_get_u64(NULL, 999));
+	REQUIRE(tini_key_get_u64(nullptr, 999) == 999);
 
 	tini_destroy(ini);
 }
 
-void test_key_get_double_valid(void) {
+TEST_CASE("Double Getters - double valid", "[value_getter]") {
 	struct {
 		double      expected;
 		const char *value;
@@ -169,13 +172,13 @@ void test_key_get_double_valid(void) {
 		tini_key_t *key    = tini_section_add_key(sec, "double_val", cases[i].value);
 		double      result = tini_key_get_double(key, -999.0);
 		double      diff   = fabs(result - cases[i].expected);
-		assert_true(diff < 1e-6);
+		REQUIRE(diff < 1e-6);
 	}
 
 	tini_destroy(ini);
 }
 
-void test_key_get_double_invalid(void) {
+TEST_CASE("Double Getters - double invalid", "[value_getter]") {
 	const char *bad_values[] = {"foo", "not_a_number", "NaN_text"};
 
 	tini_t         *ini = tini_empty();
@@ -186,14 +189,14 @@ void test_key_get_double_invalid(void) {
 	for (size_t i = 0; i < sizeof(bad_values) / sizeof(bad_values[0]); ++i) {
 		tini_key_t *key    = tini_section_add_key(sec, "bad_double", bad_values[i]);
 		double      result = tini_key_get_double(key, DEFAULT);
-		assert_float64_le(fabs(result - DEFAULT), 1e-9);
+		REQUIRE(fabs(result - DEFAULT) <= 1e-9);
 	}
-	assert_float64_le(fabs(tini_key_get_double(NULL, DEFAULT) - DEFAULT), 1e-9);
+	REQUIRE(fabs(tini_key_get_double(nullptr, DEFAULT) - DEFAULT) <= 1e-9);
 
 	tini_destroy(ini);
 }
 
-void test_key_get_bool_true(void) {
+TEST_CASE("Boolean Getters - bool true values", "[value_getter]") {
 	const char *true_values[] = {
 		"1", "true", "t", "TRUE", "T", "yes", "y", "YES", "Y",
 	};
@@ -203,13 +206,13 @@ void test_key_get_bool_true(void) {
 
 	for (size_t i = 0; i < sizeof(true_values) / sizeof(true_values[0]); ++i) {
 		tini_key_t *key = tini_section_add_key(sec, "bool_val", true_values[i]);
-		assert_true(tini_key_get_bool(key, false));
+		REQUIRE(tini_key_get_bool(key, false) == true);
 	}
 
 	tini_destroy(ini);
 }
 
-void test_key_get_bool_false(void) {
+TEST_CASE("Boolean Getters - bool false values", "[value_getter]") {
 	const char *false_values[] = {
 		"0", "false", "f", "FALSE", "F", "no", "n", "NO", "N",
 	};
@@ -219,13 +222,13 @@ void test_key_get_bool_false(void) {
 
 	for (size_t i = 0; i < sizeof(false_values) / sizeof(false_values[0]); ++i) {
 		tini_key_t *key = tini_section_add_key(sec, "bool_val", false_values[i]);
-		assert_false(tini_key_get_bool(key, true));
+		REQUIRE(tini_key_get_bool(key, true) == false);
 	}
 
 	tini_destroy(ini);
 }
 
-void test_key_get_bool_invalid(void) {
+TEST_CASE("Boolean Getters - bool invalid values", "[value_getter]") {
 	const char *invalid_values[] = {"", "m'kay", "42", "_true", "maybe"};
 
 	tini_t         *ini = tini_empty();
@@ -233,45 +236,11 @@ void test_key_get_bool_invalid(void) {
 
 	for (size_t i = 0; i < sizeof(invalid_values) / sizeof(invalid_values[0]); ++i) {
 		tini_key_t *key = tini_section_add_key(sec, "bad_bool", invalid_values[i]);
-		assert_true(tini_key_get_bool(key, true));
-		assert_false(tini_key_get_bool(key, false));
+		REQUIRE(tini_key_get_bool(key, true) == true);
+		REQUIRE(tini_key_get_bool(key, false) == false);
 	}
-	assert_true(tini_key_get_bool(NULL, true));
-	assert_false(tini_key_get_bool(NULL, false));
+	REQUIRE(tini_key_get_bool(nullptr, true) == true);
+	REQUIRE(tini_key_get_bool(nullptr, false) == false);
 
 	tini_destroy(ini);
-}
-
-int main(void) {
-	cunit_init();
-
-	CUNIT_SUITE_BEGIN("String Getters", NULL, NULL)
-	CUNIT_TEST("tini_key_get", test_key_get)
-	CUNIT_TEST("tini_key_get_string", test_key_get_string)
-	CUNIT_SUITE_END()
-
-	CUNIT_SUITE_BEGIN("Integer Getters", NULL, NULL)
-	CUNIT_TEST("int valid", test_key_get_int_valid)
-	CUNIT_TEST("int invalid", test_key_get_int_invalid)
-	CUNIT_SUITE_END()
-
-	CUNIT_SUITE_BEGIN("64-bit Integer Getters", NULL, NULL)
-	CUNIT_TEST("i64 valid", test_key_get_i64_valid)
-	CUNIT_TEST("i64 invalid", test_key_get_i64_invalid)
-	CUNIT_TEST("u64 valid", test_key_get_u64_valid)
-	CUNIT_TEST("u64 invalid", test_key_get_u64_invalid)
-	CUNIT_SUITE_END()
-
-	CUNIT_SUITE_BEGIN("Double Getters", NULL, NULL)
-	CUNIT_TEST("double valid", test_key_get_double_valid)
-	CUNIT_TEST("double invalid", test_key_get_double_invalid)
-	CUNIT_SUITE_END()
-
-	CUNIT_SUITE_BEGIN("Boolean Getters", NULL, NULL)
-	CUNIT_TEST("bool true values", test_key_get_bool_true)
-	CUNIT_TEST("bool false values", test_key_get_bool_false)
-	CUNIT_TEST("bool invalid values", test_key_get_bool_invalid)
-	CUNIT_SUITE_END()
-
-	return cunit_run();
 }

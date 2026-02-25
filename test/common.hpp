@@ -1,11 +1,10 @@
-#ifndef TINI_TEST_COMMON_H
-#define TINI_TEST_COMMON_H
+#ifndef TINI_TEST_CATCH_COMMON_HPP
+#define TINI_TEST_CATCH_COMMON_HPP
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "cunit.h"
 #include "tini/tini.h"
 
 #ifndef TEST_RESOURCE_DIR
@@ -105,4 +104,4 @@ static inline int test_remove_key(tini_t *ini, const char *section, const char *
 	return sec ? tini_section_remove_key(sec, key) : -1;
 }
 
-#endif  // TINI_TEST_COMMON_H
+#endif  // TINI_TEST_CATCH_COMMON_HPP

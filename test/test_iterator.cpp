@@ -1,28 +1,31 @@
-#include "test_common.h"
+#include "common.hpp"
 
-void test_section_iter_empty(void) {
+#define CATCH_CONFIG_MAIN
+#include <catch.hpp>
+
+TEST_CASE("Section Iteration - Empty config", "[iterator]") {
 	tini_t *ini = tini_empty();
 
 	tini_section_t *sec = tini_first_section(ini);
-	assert_null(sec);
+	REQUIRE(sec == nullptr);
 
 	tini_destroy(ini);
 }
 
-void test_section_iter_single(void) {
+TEST_CASE("Section Iteration - Single section", "[iterator]") {
 	tini_t *ini = tini_empty();
 	tini_get_section(ini, "only");
 
 	tini_section_t *sec = tini_first_section(ini);
-	assert_not_null(sec);
-	assert_str_eq("only", tini_section_name(sec));
+	REQUIRE(sec != nullptr);
+	REQUIRE(std::string(tini_section_name(sec)) == "only");
 
-	assert_null(tini_section_next(sec));
+	REQUIRE(tini_section_next(sec) == nullptr);
 
 	tini_destroy(ini);
 }
 
-void test_section_iter_multiple(void) {
+TEST_CASE("Section Iteration - Multiple sections", "[iterator]") {
 	tini_t *ini = tini_empty();
 
 	tini_get_section(ini, "a");
@@ -31,58 +34,58 @@ void test_section_iter_multiple(void) {
 
 	int count = 0;
 	for (tini_section_t *sec = tini_first_section(ini); sec; sec = tini_section_next(sec)) {
-		assert_not_null(tini_section_name(sec));
+		REQUIRE(tini_section_name(sec) != nullptr);
 		count++;
 	}
-	assert_int_eq(3, count);
+	REQUIRE(count == 3);
 
 	tini_destroy(ini);
 }
 
-void test_section_name(void) {
+TEST_CASE("Section Iteration - Section name", "[iterator]") {
 	tini_t *ini = tini_empty();
 
 	tini_section_t *sec = tini_get_section(ini, "TestSection");
-	assert_str_eq("TestSection", tini_section_name(sec));
+	REQUIRE(std::string(tini_section_name(sec)) == "TestSection");
 
 	tini_section_t *empty_sec = tini_get_section(ini, "");
-	assert_str_eq("", tini_section_name(empty_sec));
+	REQUIRE(std::string(tini_section_name(empty_sec)) == "");
 
 	tini_destroy(ini);
 }
 
-void test_section_iter_null_safety(void) {
-	assert_null(tini_first_section(NULL));
-	assert_null(tini_section_next(NULL));
-	assert_null(tini_section_name(NULL));
+TEST_CASE("Section Iteration - NULL safety", "[iterator]") {
+	REQUIRE(tini_first_section(nullptr) == nullptr);
+	REQUIRE(tini_section_next(nullptr) == nullptr);
+	REQUIRE(tini_section_name(nullptr) == nullptr);
 }
 
-void test_key_iter_empty(void) {
+TEST_CASE("Key Iteration - Empty section", "[iterator]") {
 	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_key_t *key = tini_section_first_key(sec);
-	assert_null(key);
+	REQUIRE(key == nullptr);
 
 	tini_destroy(ini);
 }
 
-void test_key_iter_single(void) {
+TEST_CASE("Key Iteration - Single key", "[iterator]") {
 	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 	tini_section_add_key(sec, "only_key", "value");
 
 	tini_key_t *key = tini_section_first_key(sec);
-	assert_not_null(key);
-	assert_str_eq("only_key", tini_key_name(key));
-	assert_str_eq("value", tini_key_get_value(key));
+	REQUIRE(key != nullptr);
+	REQUIRE(std::string(tini_key_name(key)) == "only_key");
+	REQUIRE(std::string(tini_key_get_value(key)) == "value");
 
-	assert_null(tini_key_next(key));
+	REQUIRE(tini_key_next(key) == nullptr);
 
 	tini_destroy(ini);
 }
 
-void test_key_iter_multiple(void) {
+TEST_CASE("Key Iteration - Multiple keys", "[iterator]") {
 	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
@@ -92,31 +95,31 @@ void test_key_iter_multiple(void) {
 
 	int count = 0;
 	for (tini_key_t *key = tini_section_first_key(sec); key; key = tini_key_next(key)) {
-		assert_not_null(tini_key_name(key));
+		REQUIRE(tini_key_name(key) != nullptr);
 		count++;
 	}
-	assert_int_eq(3, count);
+	REQUIRE(count == 3);
 
 	tini_destroy(ini);
 }
 
-void test_key_name(void) {
+TEST_CASE("Key Iteration - Key name", "[iterator]") {
 	tini_t         *ini = tini_empty();
 	tini_section_t *sec = tini_get_section(ini, "test");
 
 	tini_key_t *key = tini_section_add_key(sec, "MyKey", "value");
-	assert_str_eq("MyKey", tini_key_name(key));
+	REQUIRE(std::string(tini_key_name(key)) == "MyKey");
 
 	tini_destroy(ini);
 }
 
-void test_key_iter_null_safety(void) {
-	assert_null(tini_section_first_key(NULL));
-	assert_null(tini_key_next(NULL));
-	assert_null(tini_key_name(NULL));
+TEST_CASE("Key Iteration - NULL safety", "[iterator]") {
+	REQUIRE(tini_section_first_key(nullptr) == nullptr);
+	REQUIRE(tini_key_next(nullptr) == nullptr);
+	REQUIRE(tini_key_name(nullptr) == nullptr);
 }
 
-void test_full_enumeration(void) {
+TEST_CASE("Full Enumeration - Nested iteration", "[iterator]") {
 	tini_t *ini = tini_empty();
 
 	for (int i = 1; i <= 3; i++) {
@@ -142,34 +145,8 @@ void test_full_enumeration(void) {
 		}
 	}
 
-	assert_int_eq(3, section_count);
-	assert_int_eq(6, total_keys);
+	REQUIRE(section_count == 3);
+	REQUIRE(total_keys == 6);
 
 	tini_destroy(ini);
-}
-
-int main(void) {
-	cunit_init();
-
-	CUNIT_SUITE_BEGIN("Section Iteration", NULL, NULL)
-	CUNIT_TEST("Empty config", test_section_iter_empty)
-	CUNIT_TEST("Single section", test_section_iter_single)
-	CUNIT_TEST("Multiple sections", test_section_iter_multiple)
-	CUNIT_TEST("Section name", test_section_name)
-	CUNIT_TEST("NULL safety", test_section_iter_null_safety)
-	CUNIT_SUITE_END()
-
-	CUNIT_SUITE_BEGIN("Key Iteration", NULL, NULL)
-	CUNIT_TEST("Empty section", test_key_iter_empty)
-	CUNIT_TEST("Single key", test_key_iter_single)
-	CUNIT_TEST("Multiple keys", test_key_iter_multiple)
-	CUNIT_TEST("Key name", test_key_name)
-	CUNIT_TEST("NULL safety", test_key_iter_null_safety)
-	CUNIT_SUITE_END()
-
-	CUNIT_SUITE_BEGIN("Full Enumeration", NULL, NULL)
-	CUNIT_TEST("Nested iteration", test_full_enumeration)
-	CUNIT_SUITE_END()
-
-	return cunit_run();
 }
