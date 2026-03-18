@@ -42,6 +42,11 @@ tini_key_t *key = tini_find_key(tini, "section1", "key1");
 const char *value = tini_key_get(key, "default");
 ```
 
+**Parser Settings**:
+
+`tini_set_delim()` sets the key/value delimiter. The default is `=`.
+`tini_set_nosection()` enables or disables no-section keys (keys before the first section header).
+
 **Full Example**:
 
 ```c

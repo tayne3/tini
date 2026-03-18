@@ -42,6 +42,11 @@ tini_key_t *key = tini_find_key(tini, "section1", "key1");
 const char *value = tini_key_get(key, "default");
 ```
 
+**解析设置**:
+
+`tini_set_delim()` 用于设置键值分隔符，默认值为 `=`。
+`tini_set_nosection()` 用于设置是否启用无节键值（第一节之前的键值）。
+
 **示例代码**:
 
 ```c
