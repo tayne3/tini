@@ -74,6 +74,8 @@ struct tini_section_s {
 struct tini_s {
 	struct tini_section_s *sections;
 	int                    last_error;
+	char                   delim;
+	bool                   nosection;
 };
 
 // ============================================================================
@@ -98,6 +100,8 @@ tini_t *tini_create(const char *path) {
 
 	self->sections   = NULL;
 	self->last_error = TinyError_Normal;
+	self->delim      = '=';
+	self->nosection  = false;
 
 	if (path && !STR_ISEMPTY(path)) {
 		tini_load(self, path);
@@ -211,7 +215,7 @@ int tini_load(tini_t *self, const char *path) {
 		}
 		if (comment_start) {
 			*comment_start = '\0';
-			len            = comment_start - line;
+			len            = (size_t)(comment_start - line);
 		}
 
 		while (len > 0 && isspace((unsigned char)line[len - 1])) {
@@ -242,22 +246,28 @@ int tini_load(tini_t *self, const char *path) {
 			continue;
 		}
 
-		char *equals = strchr(start, '=');
-		if (equals && current_section) {
-			*equals     = '\0';
-			char *key   = start;
-			char *value = equals + 1;
-
-			char *kend = key + strlen(key) - 1;
-			while (kend > key && isspace((unsigned char)*kend)) {
-				*kend-- = '\0';
+		char *delimiter = strchr(start, self->delim);
+		if (delimiter) {
+			if (!current_section && self->nosection) {
+				current_section = tini_get_section(self, "");
 			}
+			if (current_section) {
+				*delimiter   = '\0';
+				char *key    = start;
+				char *value  = delimiter + 1;
+				char *keyend = key + strlen(key);
 
-			while (*value && isspace((unsigned char)*value)) {
-				value++;
+				while (keyend > key && isspace((unsigned char)keyend[-1])) {
+					*--keyend = '\0';
+				}
+				while (*value && isspace((unsigned char)*value)) {
+					value++;
+				}
+
+				if (*key != '\0') {
+					tini_section_add_key(current_section, key, value);
+				}
 			}
-
-			tini_section_add_key(current_section, key, value);
 		}
 
 		if (c == EOF) {
@@ -270,6 +280,22 @@ int tini_load(tini_t *self, const char *path) {
 	}
 	fclose(fp);
 	return 0;
+}
+
+void tini_set_delim(tini_t *self, char delim) {
+	if (!self) {
+		return;
+	}
+	if (delim == '=' || delim == ':') {
+		self->delim = delim;
+	}
+}
+
+void tini_set_nosection(tini_t *self, bool enabled) {
+	if (!self) {
+		return;
+	}
+	self->nosection = enabled;
 }
 
 int tini_save_to(tini_t *self, const char *path) {

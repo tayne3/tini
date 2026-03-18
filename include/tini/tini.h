@@ -92,6 +92,21 @@ TINI_API void tini_clear(tini_t *self);
 TINI_API int tini_load(tini_t *self, const char *path);
 
 /**
+ * @brief Set the key/value delimiter used during parsing
+ * @param self tini object
+ * @param delim delimiter character, currently '=' or ':'
+ * @note Invalid delimiters are ignored and the current setting is kept
+ */
+TINI_API void tini_set_delim(tini_t *self, char delim);
+
+/**
+ * @brief Enable or disable no-section keys
+ * @param self tini object
+ * @param enabled true to store no-section keys in the "" section
+ */
+TINI_API void tini_set_nosection(tini_t *self, bool enabled);
+
+/**
  * @brief Save configuration to file
  * @param self tini object
  * @param path output file path
@@ -426,6 +441,9 @@ public:
 
 	int                lastError() const { return tini_last_error(d); }
 	static const char *errorString(int code) { return tini_error_string(code); }
+
+	void setDelim(char delim) { tini_set_delim(d, delim); }
+	void setNoSection(bool enabled) { tini_set_nosection(d, enabled); }
 
 	int  load(const std::string &path) { return tini_load(d, path.c_str()); }
 	void clear() { tini_clear(d); }

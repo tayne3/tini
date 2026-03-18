@@ -58,3 +58,23 @@ TEST_CASE("C++ API - Basic", "[cpp]") {
 
 	remove(path);
 }
+
+TEST_CASE("C++ API - Parser config", "[cpp]") {
+	const char *content = "+IPR:9\n"
+						  "+LFR:868\n"
+						  "[section]\n"
+						  "key:value\n";
+
+	test_write_temp_ini("cpp-parser.ini", content);
+
+	tini::Ini ini;
+	ini.setDelim(':');
+	ini.setNoSection(true);
+	REQUIRE(ini.load(test_tmp_path("cpp-parser.ini")) == 0);
+
+	REQUIRE(ini.findKey("", "+IPR").getString() == "9");
+	REQUIRE(ini.findKey("", "+LFR").getString() == "868");
+	REQUIRE(ini.findKey("section", "key").getString() == "value");
+
+	test_remove_temp_ini("cpp-parser.ini");
+}

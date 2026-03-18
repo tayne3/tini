@@ -213,3 +213,82 @@ TEST_CASE("Edge Cases - Global keys", "[parser]") {
 	tini_destroy(ini);
 	test_remove_temp_ini("global.ini");
 }
+
+TEST_CASE("Parser Config - No-section keys can be enabled explicitly", "[parser]") {
+	const char *content = "global_key1 = value1\n"
+						  "global_key2 = value2\n"
+						  "[section]\n"
+						  "key = value\n";
+
+	test_write_temp_ini("global_options.ini", content);
+
+	tini_t *ini = tini_empty();
+	REQUIRE(ini != nullptr);
+
+	tini_set_nosection(ini, true);
+	REQUIRE(tini_load(ini, test_tmp_path("global_options.ini")) == 0);
+
+	tini_section_t *global = tini_find_section(ini, "");
+	REQUIRE(global != nullptr);
+	REQUIRE(std::string(tini_key_get_value(tini_section_find_key(global, "global_key1"))) == "value1");
+	REQUIRE(std::string(tini_key_get_value(tini_section_find_key(global, "global_key2"))) == "value2");
+
+	tini_section_t *sec = tini_find_section(ini, "section");
+	REQUIRE(sec != nullptr);
+	REQUIRE(std::string(tini_key_get_value(tini_section_find_key(sec, "key"))) == "value");
+
+	tini_destroy(ini);
+	test_remove_temp_ini("global_options.ini");
+}
+
+TEST_CASE("Parser Config - Colon delimiter can be enabled explicitly", "[parser]") {
+	const char *content = "+IPR:9\n"
+						  "+LFR:868\n"
+						  "+PATH:C:\\\\temp\\\\file\n"
+						  "[section]\n"
+						  "key:value\n";
+
+	test_write_temp_ini("colon_options.ini", content);
+
+	tini_t *ini = tini_empty();
+	REQUIRE(ini != nullptr);
+
+	tini_set_delim(ini, ':');
+	tini_set_nosection(ini, true);
+	REQUIRE(tini_load(ini, test_tmp_path("colon_options.ini")) == 0);
+
+	tini_section_t *global = tini_find_section(ini, "");
+	REQUIRE(global != nullptr);
+	REQUIRE(std::string(tini_key_get_value(tini_section_find_key(global, "+IPR"))) == "9");
+	REQUIRE(std::string(tini_key_get_value(tini_section_find_key(global, "+LFR"))) == "868");
+	REQUIRE(std::string(tini_key_get_value(tini_section_find_key(global, "+PATH"))) == "C:\\\\temp\\\\file");
+
+	tini_section_t *sec = tini_find_section(ini, "section");
+	REQUIRE(sec != nullptr);
+	REQUIRE(std::string(tini_key_get_value(tini_section_find_key(sec, "key"))) == "value");
+
+	tini_destroy(ini);
+	test_remove_temp_ini("colon_options.ini");
+}
+
+TEST_CASE("Parser Config - Delimiter is strict", "[parser]") {
+	const char *content = "eq = value1\n"
+						  "colon:value2\n";
+
+	test_write_temp_ini("strict_delim.ini", content);
+
+	tini_t *ini = tini_empty();
+	REQUIRE(ini != nullptr);
+
+	tini_set_nosection(ini, true);
+	tini_set_delim(ini, ':');
+	REQUIRE(tini_load(ini, test_tmp_path("strict_delim.ini")) == 0);
+
+	tini_section_t *global = tini_find_section(ini, "");
+	REQUIRE(global != nullptr);
+	REQUIRE(tini_section_find_key(global, "eq") == nullptr);
+	REQUIRE(std::string(tini_key_get_value(tini_section_find_key(global, "colon"))) == "value2");
+
+	tini_destroy(ini);
+	test_remove_temp_ini("strict_delim.ini");
+}
