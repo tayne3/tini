@@ -1,29 +1,40 @@
 name: Release
-run-name: ${{ github.actor }} is releasing the project 🚀
 
 on:
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'The tag to create a release for (e.g., v1.0.0)'
-        required: true
   push:
     tags:
-      - 'v*'
+      - "v*.*.*"
+      - "v*.*.*-*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version tag (e.g., v1.2.3)"
+        required: true
+        type: string
+      prerelease:
+        description: "Mark as pre-release"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
 
 jobs:
-  release:
+  create-release:
+    name: Create Release
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    timeout-minutes: 10
+
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Publish Release
+
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.tag || github.ref_name }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

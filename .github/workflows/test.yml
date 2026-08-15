@@ -1,25 +1,24 @@
 name: Test
-run-name: ${{ github.actor }} is testing the project 🔬
 
 on:
   push:
     branches: [master, develop]
-    paths:
-      - ".github/workflows/test.yml"
-      - "CMakeLists.txt"
-      - "cmake/**"
-      - "include/**"
-      - "src/**"
-      - "test/**"
+    paths-ignore:
+      - ".clang-format"
+      - ".editorconfig"
+      - ".gitignore"
+      - ".gitattributes"
+      - "README.md"
+      - "docs/**"
   pull_request:
     branches: [master]
-    paths:
-      - ".github/workflows/test.yml"
-      - "CMakeLists.txt"
-      - "cmake/**"
-      - "include/**"
-      - "src/**"
-      - "test/**"
+    paths-ignore:
+      - ".clang-format"
+      - ".editorconfig"
+      - ".gitignore"
+      - ".gitattributes"
+      - "README.md"
+      - "docs/**"
   workflow_dispatch:
 
 concurrency:
@@ -120,7 +119,7 @@ jobs:
           -G "Unix Makefiles"
           -DCMAKE_C_COMPILER=${{ matrix.compiler }}-${{ matrix.version }}
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-          -DTINI_BUILD_TEST=ON
+          -DTINI_ENABLE_TESTS=ON
 
       - name: Build
         run: cmake --build build --config ${{ matrix.build_type }}
@@ -184,7 +183,7 @@ jobs:
           -G "${{ matrix.generator }}"
           ${{ matrix.toolset && format('-T {0}', matrix.toolset) || '' }}
           -DBUILD_SHARED_LIBS=OFF
-          -DTINI_BUILD_TEST=ON
+          -DTINI_ENABLE_TESTS=ON
         shell: bash
 
       - name: Build
@@ -226,7 +225,7 @@ jobs:
           -G "MinGW Makefiles"
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           -DBUILD_SHARED_LIBS=OFF
-          -DTINI_BUILD_TEST=ON
+          -DTINI_ENABLE_TESTS=ON
 
       - name: Build
         run: cmake --build build --config ${{ matrix.build_type }}
@@ -265,7 +264,7 @@ jobs:
           -G "Unix Makefiles"
           -DCMAKE_BUILD_TYPE=Release
           -DBUILD_SHARED_LIBS=OFF
-          -DTINI_BUILD_TEST=ON
+          -DTINI_ENABLE_TESTS=ON
 
       - name: Build
         run: cmake --build build
@@ -317,7 +316,7 @@ jobs:
           ${{ matrix.cxx && format('-DCMAKE_CXX_COMPILER={0}', matrix.cxx) || '' }}
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           -DBUILD_SHARED_LIBS=OFF
-          -DTINI_BUILD_TEST=ON
+          -DTINI_ENABLE_TESTS=ON
 
       - name: Build
         run: cmake --build build --config ${{ matrix.build_type }}
