@@ -6,7 +6,7 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR)
   )
 endif()
 
-project(tini VERSION 0.1.7)
+project(tini VERSION 0.1.8)
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 
