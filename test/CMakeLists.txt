@@ -1,27 +1,18 @@
-set(TEST_RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/res")
-set(TEST_TEMP_DIR "${CMAKE_CURRENT_BINARY_DIR}")
-
-function(tini_add_test name)
-  add_executable(${name} ${ARGN})
-  add_test(NAME ${name} COMMAND $<TARGET_FILE:${name}>)
-  target_include_directories(${name} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-  target_link_libraries(${name} PRIVATE
-    tini_compile_dependency
-    tini::tini 
+file(GLOB_RECURSE SRCS_G CONFIGURE_DEPENDS "cases/*.cpp")
+foreach(SRC ${SRCS_G})
+  get_filename_component(TEST_NAME ${SRC} NAME_WE)
+  add_executable(tini_${TEST_NAME} ${SRC} main.cpp)
+  add_test(NAME tini_${TEST_NAME} COMMAND tini_${TEST_NAME})
+  target_link_libraries(tini_${TEST_NAME} PRIVATE
+    tini_internal_options
+    tini::tini
   )
-  target_compile_definitions(${name} PRIVATE 
-    TEST_RESOURCE_DIR="${TEST_RESOURCE_DIR}"
-    TEST_TEMP_DIR="${TEST_TEMP_DIR}"
+  target_include_directories(tini_${TEST_NAME} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/doctest
+    ${CMAKE_CURRENT_SOURCE_DIR}/cases
   )
-endfunction()
-
-tini_add_test(test_lifecycle test_lifecycle.cpp)
-tini_add_test(test_section_api test_section_api.cpp)
-tini_add_test(test_key_api test_key_api.cpp)
-tini_add_test(test_value_getter test_value_getter.cpp)
-tini_add_test(test_parser test_parser.cpp)
-tini_add_test(test_serializer test_serializer.cpp)
-tini_add_test(test_edge_cases test_edge_cases.cpp)
-tini_add_test(test_error_handling test_error_handling.cpp)
-tini_add_test(test_iterator test_iterator.cpp)
-tini_add_test(test_cpp test_cpp.cpp)
+  target_compile_definitions(tini_${TEST_NAME} PRIVATE
+    TEST_RESOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/res"
+    TEST_TEMP_DIR="${CMAKE_CURRENT_BINARY_DIR}"
+  )
+endforeach()
